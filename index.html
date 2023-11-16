@@ -26,22 +26,58 @@
         const size = 3;
         const margin = 120;
 
-        let array = reset(size);
+        let game_array = reset(size);
+        let turn = 1;
+
+        game_array[0][0] = turn;
+        game_array[1][1] = turn;
+        game_array[0][2] = -turn;
         
         const game_ctx = document.getElementById("game").getContext("2d");
-        const img = new Image();
-        img.src = "./assets/hash.png";
+        const hash_img = new Image();
+        hash_img.src = "./assets/hash.png";
 
-        img.onload = () => {
+        const player_O = new Image();
+        player_O.src = "./assets/o.png";
 
-            game_ctx.drawImage(img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+        const player_X = new Image();
+        player_X.src = "./assets/x.png";
+
+        const cats_img = new Image();
+        cats_img.src = "./assets/cat.png";
+        
+
+        hash_img.onload = () => {
+
+            game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
             //this code will be removed later. 
-            game_ctx.fillStyle = "green";
-            game_ctx.globalAlpha = 0.25;
-            game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
-            game_ctx.globalAlpha = 1;
-            draw_grid(game_ctx, size, margin);
+            // game_ctx.fillStyle = "green";
+            // game_ctx.globalAlpha = 0.25;
+            // game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
+            // game_ctx.globalAlpha = 1;
+            // draw_grid(game_ctx, size, margin);
+            draw_game(game_ctx, game_array, margin);
+
+        };
+
+        const draw_game = (ctx, array, margin) => {
+
+            let size = array.length;
+            let ctx_x = (ctx.canvas.width - margin * 2) / size;
+            let ctx_y = (ctx.canvas.height - margin * 2) / size;
+
+
+
+            for (let x = 0; x < size; x++) {
+                for (let y = 0; y < size; y++) {
+                    
+                    if (array[x][y]) {
+                        ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+                    }
+                    
+                }
+            }
 
         };
 
@@ -64,8 +100,6 @@
                 ctx.lineTo(ctx.canvas.width -  margin, margin + x * ctx_y);
                 ctx.stroke();
             }
-
-
         };
 
 
