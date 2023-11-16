@@ -7,6 +7,71 @@
     <title>Tic Tac Toe JS</title>
 </head>
 <body>
-    
+    <canvas id="game" height="640" width="720"></canvas>
+
+    <script>
+
+        const reset = (size) => {
+            let row = [];
+            for (let x = 0; x < size; x++) {
+                let column = [];
+                for (let y = 0; y < size; y++){
+                    column.push(0);
+                }
+                row.push(column);
+            }
+            return row;
+        };
+
+        const size = 3;
+        const margin = 120;
+
+        let array = reset(size);
+        
+        const game_ctx = document.getElementById("game").getContext("2d");
+        const img = new Image();
+        img.src = "./assets/hash.png";
+
+        img.onload = () => {
+
+            game_ctx.drawImage(img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+
+            //this code will be removed later. 
+            game_ctx.fillStyle = "green";
+            game_ctx.globalAlpha = 0.25;
+            game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
+            game_ctx.globalAlpha = 1;
+            draw_grid(game_ctx, size, margin);
+
+        };
+
+        const draw_grid = (ctx, size, margin) => {
+
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 5;
+
+            let ctx_x = (ctx.canvas.width - margin * 2) / size;
+            let ctx_y = (ctx.canvas.height - margin * 2) / size;
+
+            for (let x = 1; x < size; x++) {
+                ctx.beginPath();
+                ctx.moveTo(margin + x * ctx_x, margin);
+                ctx.lineTo(margin + x * ctx_x, ctx.canvas.height - margin);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(margin, margin + x * ctx_y);
+                ctx.lineTo(ctx.canvas.width -  margin, margin + x * ctx_y);
+                ctx.stroke();
+            }
+
+
+        };
+
+
+
+        
+        
+    </script>
 </body>
 </html>
