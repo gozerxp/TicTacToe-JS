@@ -11,83 +11,46 @@
 
     <script>
 
-        const reset = (size) => {
-            let row = [];
-            for (let x = 0; x < size; x++) {
-                let column = [];
-                for (let y = 0; y < size; y++){
-                    column.push(0);
-                }
-                row.push(column);
-            }
-            return row;
-        };
+        const game_canvas = document.getElementById("game");
+        const game_ctx = game_canvas.getContext("2d");
 
-        const size = 3;
-        const margin = 120;
+        //check for touchscreen
+        const __touch_device__ = window.ontouchstart !== undefined;
 
-        let game_array = reset(size);
-        let turn = 1;
-
-        game_array[0][0] = turn;
-        game_array[1][1] = turn;
-        game_array[0][2] = -turn;
-        
-        const game_ctx = document.getElementById("game").getContext("2d");
         const hash_img = new Image();
         hash_img.src = "./assets/hash.png";
-
-        const player_O = new Image();
-        player_O.src = "./assets/o.png";
 
         const player_X = new Image();
         player_X.src = "./assets/x.png";
 
+        const player_O = new Image();
+        player_O.src = "./assets/o.png";
+
         const cats_img = new Image();
         cats_img.src = "./assets/cat.png";
-        
 
-        hash_img.onload = () => {
-
-            game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-
-            //this code will be removed later. 
-            // game_ctx.fillStyle = "green";
-            // game_ctx.globalAlpha = 0.25;
-            // game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
-            // game_ctx.globalAlpha = 1;
-            // draw_grid(game_ctx, size, margin);
-            draw_game(game_ctx, game_array, margin);
-
+        const score = {
+            x: 0,
+            o: 0,
+            cats: 0
         };
 
-        const draw_game = (ctx, array, margin) => {
-
-            let size = array.length;
-            let ctx_x = (ctx.canvas.width - margin * 2) / size;
-            let ctx_y = (ctx.canvas.height - margin * 2) / size;
+        const get_ctx_size_x = (ctx, size, margin) => {
+            return (ctx.canvas.width - margin * 2) / size;
+        };
 
 
-
-            for (let x = 0; x < size; x++) {
-                for (let y = 0; y < size; y++) {
-                    
-                    if (array[x][y]) {
-                        ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-                    }
-                    
-                }
-            }
-
+        const get_ctx_size_y = (ctx, size, margin) => {
+            return (ctx.canvas.height - margin * 2) / size;
         };
 
         const draw_grid = (ctx, size, margin) => {
 
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 5;
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 3;
 
-            let ctx_x = (ctx.canvas.width - margin * 2) / size;
-            let ctx_y = (ctx.canvas.height - margin * 2) / size;
+            let ctx_x = get_ctx_size_x(ctx, size, margin);
+            let ctx_y = get_ctx_size_y(ctx, size, margin);
 
             for (let x = 1; x < size; x++) {
                 ctx.beginPath();
@@ -102,10 +65,196 @@
             }
         };
 
+        const draw_game_board = () => {
 
+            game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
-        
-        
+            //game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+
+            //this code will be removed later. 
+            game_ctx.fillStyle = "green";
+            game_ctx.globalAlpha = 0.15;
+            game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
+            game_ctx.globalAlpha = 1;
+
+            draw_grid(game_ctx, size, margin);
+
+        };
+
+        const size = 3;
+        const margin = 25; //120;
+        let turn = 1;
+        let game_over = false;
+
+        const reset = (size) => {
+            let row = [];
+            for (let x = 0; x < size; x++) {
+                let column = [];
+                for (let y = 0; y < size; y++){
+                    column.push(0);
+                }
+                row.push(column);
+            }
+
+            draw_game_board();
+            turn = 1;
+            game_over = false;
+            console.clear();
+            return row;
+        };
+
+        let game_array = reset(size);
+
+        hash_img.onload = () => {
+            
+            draw_game_board();
+
+        };
+
+        const get_player_img = (turn) => { return turn === 1 ? player_X : player_O; }
+
+        const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; }
+
+        const draw_game = (ctx, array, margin) => {
+
+            let size = array.length;
+            let ctx_x = get_ctx_size_x(ctx, size, margin);
+            let ctx_y = get_ctx_size_y(ctx, size, margin);
+
+            for (let x = 0; x < size; x++) {
+                for (let y = 0; y < size; y++) {
+                    if (array[x][y]) {                        
+                        let x_pos = margin + ctx_x * x;
+                        let y_pos = margin + ctx_y * y;
+                        ctx.drawImage(get_player_img(array[x][y]), x_pos, y_pos, ctx_x, ctx_y);
+                    }
+                }
+            }
+        };
+
+        if (__touch_device__) {
+	        game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, margin, game_array, turn);
+        } else {
+	        game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
+        }
+
+        const input = (x, y, ctx, margin, array, turn) => {
+
+            let size = array.length;
+
+            if (game_over) {
+                game_array = reset(size);
+                return;
+            }
+            //check input bounds
+            if (x < margin || x > ctx.canvas.width - margin || y < margin || y > ctx.canvas.height - margin)
+                return;
+
+            x = parseInt((x - margin) / get_ctx_size_x(ctx, size, margin));
+            y = parseInt((y - margin) / get_ctx_size_y(ctx, size, margin));
+
+            //console.log(`${x} ${y}`);
+
+            //space is already occupied, exit.
+            if (array[x][y]) {
+                console.log("space occupied.");
+                return;
+            }
+
+            array[x][y] = turn;
+
+            draw_game(ctx, array, margin);
+
+            switch (check_gameover(array, turn, x, y)) {
+                case 0: //no winner
+                    change_turn();
+                    break;
+                case turn: //current turn wins
+                    console.log(`${get_player_turn(turn)} Wins!`);
+                    increase_score(turn);
+                    game_over = true;
+                    break;
+                case 2: //cats
+                    console.log("Cats Game!");
+                    increase_score(2);
+                    game_over = true;
+                    break;
+                default:
+            }
+
+        };
+
+        const increase_score = (type) => {
+
+            switch (type) {
+                case 1:
+                    score.x++;
+                    break;
+                case -1: 
+                    score.o++;
+                    break;
+                case 2:
+                    score.cats++;
+                    break;
+                default:
+            }
+
+            console.log(`X: ${score.x}`);
+            console.log(`O: ${score.o}`);
+            console.log(`Cats: ${score.cats}`);
+
+        };
+
+        const check_gameover = (array, turn, x_pos, y_pos) => {
+
+            let size = array.length;
+
+            //true until they are not
+            let scan_x = true, 
+                scan_y = true, 
+                diag1 = true, 
+                diag2 = true;
+
+            for (let i = 0; i < size; i++) {
+
+                //scan column
+                if (array[x_pos][i] != turn)
+                    scan_x = false;
+
+                //scan row
+                if (array[i][y_pos] != turn)
+                    scan_y = false;
+
+                //scan diagonal
+                if (array[i][i] != turn)
+                    diag1 = false;
+                
+                //scan opposite diagonal
+                if (array[i][size - 1 - i] != turn)
+                    diag2 = false;
+            }
+
+            //if any of the flags are true then the current turn won.
+            if (scan_x || scan_y || diag1 || diag2) return turn;
+
+            //if no winner declared, check for empty spaces, 
+            //if empty space found then return 0 to continue game.
+            for (let x = 0; x < size; x++) {
+                for (let y = 0; y < size; y++) {
+                    if (!array[x][y]) {
+                        return 0;
+                    }
+                }
+            }
+
+            // no empty spaces were found, declare cats game.
+            return 2;
+        };
+
+        const change_turn = () => {
+            turn = -turn;
+        };
+
     </script>
 </body>
 </html>
