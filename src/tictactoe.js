@@ -220,7 +220,7 @@ const check_gameover = (array, turn, x_pos, y_pos) => {
                 count_empty++;
     }
 
-    //if any of the flags are true then the current turn won.
+    //if any of the flags are still true then the current turn won.
     if (scan_x || scan_y || diag1 || diag2) return turn;
 
     //if no winner + empty space found then return 0 to continue game.
