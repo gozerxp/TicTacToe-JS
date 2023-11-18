@@ -35,10 +35,14 @@
             cats: 0
         };
 
+        const size = 3;
+        const margin = 0; //120;
+        let turn = 1;
+        let game_over = false;
+
         const get_ctx_size_x = (ctx, size, margin) => {
             return (ctx.canvas.width - margin * 2) / size;
         };
-
 
         const get_ctx_size_y = (ctx, size, margin) => {
             return (ctx.canvas.height - margin * 2) / size;
@@ -78,13 +82,11 @@
             game_ctx.globalAlpha = 1;
 
             draw_grid(game_ctx, size, margin);
-
         };
 
-        const size = 3;
-        const margin = 25; //120;
-        let turn = 1;
-        let game_over = false;
+        hash_img.onload = () => {
+            draw_game_board();
+        };
 
         const reset = (size) => {
             let row = [];
@@ -100,16 +102,17 @@
             turn = 1;
             game_over = false;
             console.clear();
+
             return row;
         };
 
         let game_array = reset(size);
 
-        hash_img.onload = () => {
-            
-            draw_game_board();
-
-        };
+        if (__touch_device__)
+	        game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, margin, game_array, turn);
+        else
+	        game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
+        
 
         const get_player_img = (turn) => { return turn === 1 ? player_X : player_O; }
 
@@ -131,12 +134,6 @@
                 }
             }
         };
-
-        if (__touch_device__) {
-	        game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, margin, game_array, turn);
-        } else {
-	        game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
-        }
 
         const input = (x, y, ctx, margin, array, turn) => {
 
