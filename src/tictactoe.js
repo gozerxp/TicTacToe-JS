@@ -62,12 +62,6 @@ const draw_game_board = () => {
 
     //game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
-    //this code will be removed later. 
-    // game_ctx.fillStyle = "blue";
-    // game_ctx.globalAlpha = 0.15;
-    // game_ctx.fillRect(margin, margin, game_ctx.canvas.width - margin * 2,  game_ctx.canvas.height - margin * 2);
-    // game_ctx.globalAlpha = 1;
-
     draw_grid(game_ctx, size, margin);
 };
 
@@ -132,6 +126,7 @@ const input = (x, y, ctx, margin, array, turn) => {
         game_array = reset(size);
         return;
     }
+
     //check input bounds
     if (x < margin || x > ctx.canvas.width - margin || y < margin || y > ctx.canvas.height - margin)
         return;
@@ -199,39 +194,37 @@ const check_gameover = (array, turn, x_pos, y_pos) => {
     let scan_x = true, 
         scan_y = true, 
         diag1 = true, 
-        diag2 = true;
+        diag2 = true,
+        count_empty = 0;
 
-    for (let i = 0; i < size; i++) {
+    for (let x = 0; x < size; x++) {
 
         //scan column
-        if (array[x_pos][i] != turn)
+        if (array[x_pos][x] != turn)
             scan_x = false;
 
         //scan row
-        if (array[i][y_pos] != turn)
+        if (array[x][y_pos] != turn)
             scan_y = false;
 
         //scan diagonal
-        if (array[i][i] != turn)
+        if (array[x][x] != turn)
             diag1 = false;
         
         //scan opposite diagonal
-        if (array[i][size - 1 - i] != turn)
+        if (array[x][size - 1 - x] != turn)
             diag2 = false;
+
+        for (let y = 0; y < size; y++)
+            if (!array[x][y])
+                count_empty++;
     }
 
     //if any of the flags are true then the current turn won.
     if (scan_x || scan_y || diag1 || diag2) return turn;
 
-    //if no winner declared, check for empty spaces, 
-    //if empty space found then return 0 to continue game.
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            if (!array[x][y]) {
-                return 0;
-            }
-        }
-    }
+    //if no winner + empty space found then return 0 to continue game.
+    if (count_empty > 0) return 0;
 
     // no empty spaces were found, declare cats game.
     return 2;
