@@ -195,7 +195,7 @@ const check_gameover = (array, turn, x_pos, y_pos) => {
         scan_y = true, 
         diag1 = true, 
         diag2 = true,
-        count_empty = 0;
+        count_empty = false;
 
     for (let x = 0; x < size; x++) {
 
@@ -215,9 +215,15 @@ const check_gameover = (array, turn, x_pos, y_pos) => {
         if (array[x][size - 1 - x] != turn)
             diag2 = false;
 
-        for (let y = 0; y < size; y++)
-            if (!array[x][y])
-                count_empty++;
+        //check for empty squares to help determine cats game
+        if (!count_empty) {
+            for (let y = 0; y < size; y++) {
+                if (!array[x][y]) {
+                    count_empty = true;
+                    break;
+                }
+            }
+        }
     }
 
     //if any of the flags are still true then the current turn won.
