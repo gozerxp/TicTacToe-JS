@@ -223,11 +223,11 @@ const check_gameover = (array, turn, x_pos, y_pos) => {
     //if any of the flags are still true then the current turn won.
     if (scan_x || scan_y || diag1 || diag2) return turn;
 
-    //if no winner + empty space found then return 0 to continue game.
-    if (count_empty > 0) return 0;
+    //if no winner + no empty space found then return 2 for a cats game.
+    if (!count_empty) return 2;
 
-    // no empty spaces were found, declare cats game.
-    return 2;
+    // empty spaces were found, return 0 to continue game.
+    return 0;
 };
 
 const change_turn = () => {
