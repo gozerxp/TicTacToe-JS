@@ -60,7 +60,7 @@ const draw_game_board = () => {
 
     game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
-    //game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+    game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
     draw_grid(game_ctx, size, margin);
 };
@@ -134,8 +134,6 @@ const input = (x, y, ctx, margin, array, turn) => {
     x = parseInt((x - margin) / get_ctx_size_x(ctx, size, margin));
     y = parseInt((y - margin) / get_ctx_size_y(ctx, size, margin));
 
-    //console.log(`${x} ${y}`);
-
     //space is already occupied, exit.
     if (array[x][y]) {
         console.log("space occupied.");
@@ -146,7 +144,7 @@ const input = (x, y, ctx, margin, array, turn) => {
 
     draw_game(ctx, array, margin);
 
-    switch (check_gameover(array, turn, x, y)) {
+    switch (evluate_game(array, turn, x, y)) {
         case 0: //no winner
             change_turn();
             break;
@@ -186,7 +184,7 @@ const increase_score = (type) => {
 
 };
 
-const check_gameover = (array, turn, x_pos, y_pos) => {
+const evluate_game = (array, turn, x_pos, y_pos) => {
 
     let size = array.length;
 
