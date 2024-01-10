@@ -60,9 +60,10 @@ const draw_game_board = () => {
 
     game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
-    game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+    //game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
 
     draw_grid(game_ctx, size, margin);
+    
 };
 
 hash_img.onload = () => {
