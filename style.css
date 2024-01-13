@@ -1,7 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
     background-color: dodgerblue;
+    margin: 10px;
 }
 
-canvas {
+#game {
     background-color: white;
+}
+
+#score {
+    background-color: rgb(200, 200, 200);
+}
+
+#view {
+    background-color: rgb(60, 60, 60);
+    width: 720px;
 }

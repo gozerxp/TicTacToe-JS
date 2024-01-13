@@ -1,20 +1,23 @@
 const game_canvas = document.getElementById("game");
 const game_ctx = game_canvas.getContext("2d");
 
+const score_canvas = document.getElementById("score");
+const score_ctx = score_canvas.getContext("2d");
+
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
 
-const hash_img = new Image();
-hash_img.src = "./assets/hash.png";
+const assets = {
+    x: new Image(),
+    o: new Image(),
+    cats: new Image()
+};
 
-const player_X = new Image();
-player_X.src = "./assets/x.png";
+assets.x.src = "./assets/x.png";
+assets.o.src = "./assets/o.png";
+assets.cats.src = "./assets/cat.png";
 
-const player_O = new Image();
-player_O.src = "./assets/o.png";
-
-const cats_img = new Image();
-cats_img.src = "./assets/cat.png";
+//***********************************
 
 const score = {
     x: 0,
@@ -23,88 +26,44 @@ const score = {
 };
 
 const size = 3;
-const margin = 25; //120;
+const margin = 0;
 let turn = 1;
 let game_over = false;
-
-const get_ctx_size_x = (ctx, size, margin) => {
-    return (ctx.canvas.width - margin * 2) / size;
-};
-
-const get_ctx_size_y = (ctx, size, margin) => {
-    return (ctx.canvas.height - margin * 2) / size;
-};
-
-const draw_grid = (ctx, size, margin) => {
-
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
-
-    let ctx_x = get_ctx_size_x(ctx, size, margin);
-    let ctx_y = get_ctx_size_y(ctx, size, margin);
-
-    for (let x = 1; x < size; x++) {
-        ctx.beginPath();
-        ctx.moveTo(margin + x * ctx_x, margin);
-        ctx.lineTo(margin + x * ctx_x, ctx.canvas.height - margin);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(margin, margin + x * ctx_y);
-        ctx.lineTo(ctx.canvas.width -  margin, margin + x * ctx_y);
-        ctx.stroke();
-    }
-};
-
-const draw_game_board = () => {
-
-    game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-
-    //game_ctx.drawImage(hash_img, 0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-
-    draw_grid(game_ctx, size, margin);
-    
-};
-
-hash_img.onload = () => {
-    draw_game_board();
-};
-
-const reset = (size) => {
-    let row = [];
-    for (let x = 0; x < size; x++) {
-        let column = [];
-        for (let y = 0; y < size; y++){
-            column.push(0);
-        }
-        row.push(column);
-    }
-
-    draw_game_board();
-    turn = 1;
-    game_over = false;
-    console.clear();
-
-    return row;
-};
-
 let game_array = reset(size);
+
+assets.cats.onload = () => {
+    draw_scoreboard(score_ctx);
+};
 
 if (__touch_device__)
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, margin, game_array, turn);
 else
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
 
+const get_player_img = (turn) => { return turn === 1 ? assets.x : assets.o; };
 
-const get_player_img = (turn) => { return turn === 1 ? player_X : player_O; }
+const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; };
 
-const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; }
+const change_turn = () => { turn = -turn; };
 
-const draw_game = (ctx, array, margin) => {
+function get_ctx_size_x (ctx, size, margin) {
+    return (ctx.canvas.width - margin * 2) / size;
+}
 
-    let size = array.length;
-    let ctx_x = get_ctx_size_x(ctx, size, margin);
-    let ctx_y = get_ctx_size_y(ctx, size, margin);
+function get_ctx_size_y (ctx, size, margin) {
+    return (ctx.canvas.height - margin * 2) / size;
+}
+
+function draw_game_board() {  
+    game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
+    draw_grid(game_ctx, size, margin);   
+}
+
+function draw_game (ctx, array, margin) {
+
+    const size = array.length;
+    const ctx_x = get_ctx_size_x(ctx, size, margin);
+    const ctx_y = get_ctx_size_y(ctx, size, margin);
 
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
@@ -117,14 +76,23 @@ const draw_game = (ctx, array, margin) => {
     }
 
     draw_grid(ctx, size, margin);
-};
 
-const input = (x, y, ctx, margin, array, turn) => {
+}
 
-    let size = array.length;
+function input (x, y, ctx, margin, array, turn) {
+
+    const size = array.length;
 
     if (game_over) {
         game_array = reset(size);
+        alert.active = false;
+        return;
+    }
+
+    if (alert.active) {
+        alert.active = false;
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        draw_game (ctx, array, margin);
         return;
     }
 
@@ -137,7 +105,7 @@ const input = (x, y, ctx, margin, array, turn) => {
 
     //space is already occupied, exit.
     if (array[x][y]) {
-        console.log("space occupied.");
+        alert.pop("Space Occupied.", game_ctx);
         return;
     }
 
@@ -150,21 +118,21 @@ const input = (x, y, ctx, margin, array, turn) => {
             change_turn();
             break;
         case turn: //current turn wins
-            console.log(`${get_player_turn(turn)} Wins!`);
+            alert.pop(`${get_player_turn(turn)} Wins!`, game_ctx);
             increase_score(turn);
             game_over = true;
             break;
         case 2: //cats
-            console.log("Cats Game!");
+            alert.pop("Cats Game!", game_ctx);
             increase_score(2);
             game_over = true;
             break;
         default:
     }
 
-};
+}
 
-const increase_score = (type) => {
+function increase_score (type) {
 
     switch (type) {
         case 1:
@@ -179,15 +147,48 @@ const increase_score = (type) => {
         default:
     }
 
-    console.log(`X: ${score.x}`);
-    console.log(`O: ${score.o}`);
-    console.log(`Cats: ${score.cats}`);
+    // console.log(`X: ${score.x}`);
+    // console.log(`O: ${score.o}`);
+    // console.log(`Cats: ${score.cats}`);
 
-};
+    draw_scoreboard(score_ctx);
 
-const evluate_game = (array, turn, x_pos, y_pos) => {
+}
 
-    let size = array.length;
+function draw_scoreboard (ctx) {
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    const parameters = {
+        height: ctx.canvas.height,
+        width: ctx.canvas.height,
+        margin: 10,
+        font_size: 36
+    };
+
+    draw_score_component(ctx, assets.x, score.x, 0, parameters);
+    draw_score_component(ctx, assets.o, score.o, 1, parameters);
+    draw_score_component(ctx, assets.cats, score.cats, 2, parameters);
+
+}
+
+function draw_score_component (ctx, img, score, position, parameters) {
+
+    ctx.font = `${parameters.font_size}px 'Press Start 2P'`;
+    ctx.fillStyle = "rgb(60, 60, 60)";
+
+    const txt_y = ctx.canvas.height / 2 + parameters.font_size / 2;
+    const item_width = parameters.width + parameters.margin + ctx.measureText(`${score}`).width;
+    const x_pos = (ctx.canvas.width / 3) * position + (ctx.canvas.width / 3) / 2 - item_width / 2;
+
+    ctx.drawImage(img, x_pos, 0, parameters.width, parameters.height);
+    ctx.fillText(`${score}`, x_pos + parameters.margin + parameters.width, txt_y);    
+
+}
+
+function evluate_game (array, turn, x_pos, y_pos) {
+
+    const size = array.length;
 
     //true until they are not
     let scan_x = true, 
@@ -233,8 +234,96 @@ const evluate_game = (array, turn, x_pos, y_pos) => {
 
     // empty spaces were found, return 0 to continue game.
     return 0;
-};
 
-const change_turn = () => {
-    turn = -turn;
+}
+
+function count_empty_spaces (array) {
+    
+    const size = array.length;
+    let count = 0;
+
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            if (!array[x][y]) {                        
+                count++;
+            }
+        }
+    }
+
+    return count;
+
+}
+
+function reset (size) {
+
+    let row = [];
+    for (let x = 0; x < size; x++) {
+        let column = [];
+        for (let y = 0; y < size; y++){
+            column.push(0);
+        }
+        row.push(column);
+    }
+
+    draw_game_board();
+    turn = 1;
+    game_over = false;
+    console.clear();
+
+    return row;
+}
+
+function draw_grid (ctx, size, margin) {
+
+    ctx.strokeStyle = "rgb(60, 60, 60)";
+    ctx.lineWidth = 3;
+
+    const ctx_x = get_ctx_size_x(ctx, size, margin);
+    const ctx_y = get_ctx_size_y(ctx, size, margin);
+
+    for (let x = 1; x < size; x++) {
+        ctx.beginPath();
+        ctx.moveTo(margin + x * ctx_x, margin);
+        ctx.lineTo(margin + x * ctx_x, ctx.canvas.height - margin);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(margin, margin + x * ctx_y);
+        ctx.lineTo(ctx.canvas.width -  margin, margin + x * ctx_y);
+        ctx.stroke();
+    }
+}
+
+const alert = {
+    active: false,
+    pop: function(txt, ctx) {
+        this.active = true;
+        console.log(txt);
+
+        const margin = 25;
+        const font_size = 24;
+
+        ctx.font = `${font_size}px 'Press Start 2P'`;
+        const w = ctx.measureText(`${txt}`).width;
+        const h = font_size + margin * 2.5;
+
+        const size = [w + margin * 2, h];
+        const position = [ctx.canvas.width / 2 - (size[0] / 2),
+                            ctx.canvas.height / 2 - (size[1] / 2)];
+
+        const txt_position = [ctx.canvas.width / 2 - w / 2, 
+                            ctx.canvas.height / 2 + font_size / 2];
+
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = "rgb(60, 60, 60)";
+        ctx.beginPath();
+        ctx.roundRect(...position, ...size, 20);
+        ctx.fill();
+        
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "white";
+        
+        ctx.fillText(`${txt}`, ...txt_position);  
+
+    }
 };
