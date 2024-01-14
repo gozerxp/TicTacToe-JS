@@ -27,11 +27,11 @@ const score = {
 
 const COLOR = "rgb(60, 60, 60)";
 
-const game_size = 3;
+const grid_size = 3;
 const margin = 0;
 let turn = 1;
 let game_over = false;
-let game_array = reset(game_size);
+let game_array = reset(grid_size);
 
 assets.cats.onload = () => {
     update_scoreboard(score_ctx);
@@ -67,7 +67,7 @@ function get_ctx_size_y (ctx, size, margin) {
 
 function draw_game_board() {  
     game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-    draw_grid(game_ctx, game_size, margin);   
+    draw_grid(game_ctx, grid_size, margin);   
 }
 
 function draw_game (ctx, array, margin) {
@@ -160,10 +160,6 @@ function increase_score (type) {
         default:
     }
 
-    // console.log(`X: ${score.x}`);
-    // console.log(`O: ${score.o}`);
-    // console.log(`Cats: ${score.cats}`);
-
     update_scoreboard(score_ctx);
 
 }
@@ -255,23 +251,6 @@ function evluate_game (array, turn, x_pos, y_pos) {
 
 }
 
-function count_empty_spaces (array) {
-    
-    const size = array.length;
-    let count = 0;
-
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            if (!array[x][y]) {                        
-                count++;
-            }
-        }
-    }
-
-    return count;
-
-}
-
 function reset (size) {
 
     let row = [];
@@ -358,7 +337,7 @@ function ai_move(ctx, array, turn) {
 function best_move(array, turn) {
 
     const size = array.length;
-    const BEST_SCORE = 100;
+    const BEST_SCORE = 10 ** size;
 
     let best_score = -Infinity;
     let best_move;
@@ -381,6 +360,7 @@ function best_move(array, turn) {
                 }
             }
         }
+
     }
 
     return best_move;
@@ -435,6 +415,4 @@ function mini_max(x, y, array, size, turn, depth, isMax, BEST_SCORE) {
         return best_score;
         
     }
-
-    
 }
