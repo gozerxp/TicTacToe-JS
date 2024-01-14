@@ -322,7 +322,6 @@ const alert = {
     pop: function(txt, ctx) {
         
         this.active = true;
-        //console.log(txt);
 
         const margin = 30;
         const font_size = 20;
