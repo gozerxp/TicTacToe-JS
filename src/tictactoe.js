@@ -32,16 +32,18 @@ const score = {
     cats: 0
 };
 
-const COLOR = "rgb(60, 60, 60)";
-const grid_size = 3;
-const margin = 0;
-const max_width = 720;
-const score_height = 60;
-const padding = 4;
+const settings = {
+    COLOR: "rgb(60, 60, 60)",
+    grid_size: 3,
+    margin: 0,
+    max_width: 720,
+    score_height: 60,
+    padding: 4
+};
 
 let turn = 1;
 let game_over = false;
-let game_array = reset(grid_size);
+let game_array = reset(settings.grid_size);
 
 assets.cats.onload = () => {
 
@@ -50,9 +52,9 @@ assets.cats.onload = () => {
 };
 
 if (__touch_device__) {
-    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, margin, game_array, turn);
+    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array, turn);
 } else {
-    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
+    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game_array, turn);
 }
 
 window.onresize = () => resize();
@@ -79,19 +81,19 @@ function get_ctx_size_y (ctx, size, margin) {
 }
 
 function resize () {
-    game_ctx.canvas.width = Math.min(max_width, window.innerWidth);
-    game_ctx.canvas.height = Math.min(max_width - score_height - padding, 
-                                    window.innerHeight - score_height - padding);
+    game_ctx.canvas.width = Math.min(settings.max_width, window.innerWidth);
+    game_ctx.canvas.height = Math.min(settings.max_width - settings.score_height - settings.padding, 
+                                    window.innerHeight - settings.score_height - settings.padding);
 
     score_ctx.canvas.width = game_ctx.canvas.width;
-    score_ctx.canvas.height = score_height;
-    draw_game(game_ctx, game_array, margin);
+    score_ctx.canvas.height = settings.score_height;
+    draw_game(game_ctx, game_array, settings.margin);
     update_scoreboard(score_ctx);
 }
 
 function draw_game_board() {  
     game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-    draw_grid(game_ctx, grid_size, margin);   
+    draw_grid(game_ctx, settings.grid_size, settings.margin);   
 }
 
 function draw_game (ctx, array, margin) {
@@ -219,7 +221,7 @@ function draw_score_component (ctx, img, score, position, param) {
     ctx.fillStyle = "white";
     ctx.fillText(`${score}`, x_pos + param.margin + param.width + offset, txt_y + offset);
 
-    ctx.fillStyle = COLOR;
+    ctx.fillStyle = settings.COLOR;
     ctx.fillText(`${score}`, x_pos + param.margin + param.width, txt_y);    
 
 }
@@ -296,7 +298,7 @@ function reset (size) {
 
 function draw_grid (ctx, size, margin) {
 
-    ctx.strokeStyle = COLOR;
+    ctx.strokeStyle = settings.COLOR;
     ctx.lineWidth = 3;
 
     const ctx_x = get_ctx_size_x(ctx, size, margin);
@@ -338,7 +340,7 @@ const alert = {
                             ctx.canvas.height / 2 + font_size / 2];
 
         ctx.globalAlpha = 0.9;
-        ctx.fillStyle = COLOR;
+        ctx.fillStyle = settings.COLOR;
         ctx.beginPath();
         ctx.roundRect(...position, ...size, 10);
         ctx.fill();
@@ -354,7 +356,7 @@ const alert = {
 function ai_move(ctx, array, turn) {
     const move = best_move(array, turn);
     array[move.x][move.y] = turn;
-    draw_game(ctx, array, margin);
+    draw_game(ctx, array, settings.margin);
     check_game(array, turn, move.x, move.y);
 }
 
