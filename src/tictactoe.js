@@ -27,14 +27,15 @@ const score = {
 
 const COLOR = "rgb(60, 60, 60)";
 
-const size = 3;
+const game_size = 3;
 const margin = 0;
 let turn = 1;
 let game_over = false;
-let game_array = reset(size);
+let game_array = reset(game_size);
 
 assets.cats.onload = () => {
     update_scoreboard(score_ctx);
+    //ai_move();
 };
 
 if (__touch_device__) {
@@ -52,10 +53,7 @@ const change_turn = () => {
     turn = -turn;
 
     if (turn === -1) {
-        const move = ai_move(game_array, turn);
-        game_array[move.x][move.y] = turn;
-        draw_game(game_ctx, game_array, margin);
-        check_game(game_array, turn, move.x, move.y);
+        ai_move(game_ctx, game_array, turn);
     }
 };
 
@@ -69,7 +67,7 @@ function get_ctx_size_y (ctx, size, margin) {
 
 function draw_game_board() {  
     game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-    draw_grid(game_ctx, size, margin);   
+    draw_grid(game_ctx, game_size, margin);   
 }
 
 function draw_game (ctx, array, margin) {
@@ -350,23 +348,36 @@ const alert = {
     }
 };
 
+function ai_move(ctx, array, turn) {
+    const move = best_move(array, turn);
+    array[move.x][move.y] = turn;
+    draw_game(ctx, array, margin);
+    check_game(array, turn, move.x, move.y);
+}
 
-function ai_move(array, turn) {
+function best_move(array, turn) {
 
     const size = array.length;
+    const BEST_SCORE = 100;
 
     let best_score = -Infinity;
     let best_move;
 
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
-            if (!array[x][y]) {    
+            if (!array[x][y]) {
+
                 array[x][y] = turn;                    
-                let ai_score = mini_max(x, y, array, size, turn, 0, true);
+                let ai_score = mini_max(x, y, array, size, turn, 0, false, BEST_SCORE);
                 array[x][y] = 0;
+
                 if (ai_score > best_score) {
                     best_score = ai_score;
                     best_move = { x, y };
+
+                    if (best_score === BEST_SCORE) {
+                        return best_move;
+                    }
                 }
             }
         }
@@ -375,53 +386,55 @@ function ai_move(array, turn) {
     return best_move;
 }
 
-function mini_max(x, y, array, size, turn, depth, isMax) {
+function mini_max(x, y, array, size, turn, depth, isMax, BEST_SCORE) {
 
     switch (evluate_game (array, isMax ? -turn : turn, x, y)) {
         case turn:
-            return isMax ? -1 : 1;
+            return BEST_SCORE - depth;
         case -turn:
-            return isMax ? 1 : -1;
+            return depth - BEST_SCORE;
         case 2:
             return 0;
         default:
     }
-
-    // const checkMax = isMax ? 1
  
-    // if (isMax) {
+    if (isMax) {
 
-        let best_score = isMax ? -Infinity : Infinity;
+        let best_score = -Infinity;
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
                 if (!array[x][y]) {
-                    array[x][y] = isMax ? turn : -turn;
-                    let score = mini_max(x, y, array, size, turn, depth + 1, -isMax);
+
+                    array[x][y] = turn;
+                    let score = mini_max(x, y, array, size, turn, depth + 1, !isMax, BEST_SCORE);
                     array[x][y] = 0;
-                    best_score = isMax ? Math.max(score, best_score) : Math.min(score, best_score);
+
+                    best_score = Math.max(score, best_score)
                 }
             }
         }
 
         return best_score;
 
-    // } else {
+    } else {
 
-    //     let best_score = Infinity;
-    //     for (let x = 0; x < size; x++) {
-    //         for (let y = 0; y < size; y++) {
-    //             if (!array[x][y]) {
-    //                 array[x][y] = -turn;
-    //                 let score = mini_max(x, y, array, size, turn, depth + 1, -isMax);
-    //                 array[x][y] = 0;
-    //                 best_score = Math.min(score, best_score);
-    //             }
-    //         }
-    //     }
+        let best_score = Infinity;
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                if (!array[x][y]) {
+ 
+                    array[x][y] = -turn;
+                    let score = mini_max(x, y, array, size, turn, depth + 1, !isMax, BEST_SCORE);
+                    array[x][y] = 0;
 
-    //     return best_score;
+                    best_score = Math.min(score, best_score);
+                }
+            }
+        }
+
+        return best_score;
         
-    // }
+    }
 
     
 }
