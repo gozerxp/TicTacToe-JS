@@ -1,3 +1,10 @@
+/* Written by Dan Andersen
+Art by Ferris Andersen
+
+Gozerxp Software
+http://www.gozerxp.com/
+*/
+
 const game_canvas = document.getElementById("game");
 const game_ctx = game_canvas.getContext("2d");
 
@@ -185,35 +192,35 @@ function update_scoreboard (ctx) {
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    const parameters = {
+    const param = {
         height: ctx.canvas.height,
         width: ctx.canvas.height,
         margin: 12,
         font_size: 28
     };
 
-    draw_score_component(ctx, assets.x, score.x, 0, parameters);
-    draw_score_component(ctx, assets.o, score.o, 1, parameters);
-    draw_score_component(ctx, assets.cats, score.cats, 2, parameters);
+    draw_score_component(ctx, assets.x, score.x, 0, param);
+    draw_score_component(ctx, assets.o, score.o, 1, param);
+    draw_score_component(ctx, assets.cats, score.cats, 2, param);
 
 }
 
-function draw_score_component (ctx, img, score, position, parameters) {
+function draw_score_component (ctx, img, score, position, param) {
 
-    ctx.font = `${parameters.font_size}px 'Press Start 2P'`;
+    ctx.font = `${param.font_size}px 'Press Start 2P'`;
     
-    const txt_y = ctx.canvas.height / 2 + parameters.font_size / 2;
-    const item_width = parameters.width + parameters.margin + ctx.measureText(`${score}`).width;
+    const txt_y = ctx.canvas.height / 2 + param.font_size / 2;
+    const item_width = param.width + param.margin + ctx.measureText(`${score}`).width;
     const x_pos = (ctx.canvas.width / 3) * position + (ctx.canvas.width / 3) / 2 - item_width / 2;
 
-    ctx.drawImage(img, x_pos, 0, parameters.width, parameters.height);
+    ctx.drawImage(img, x_pos, 0, param.width, param.height);
 
     const offset = -2; 
     ctx.fillStyle = "white";
-    ctx.fillText(`${score}`, x_pos + parameters.margin + parameters.width + offset, txt_y + offset);
+    ctx.fillText(`${score}`, x_pos + param.margin + param.width + offset, txt_y + offset);
 
     ctx.fillStyle = COLOR;
-    ctx.fillText(`${score}`, x_pos + parameters.margin + parameters.width, txt_y);    
+    ctx.fillText(`${score}`, x_pos + param.margin + param.width, txt_y);    
 
 }
 
@@ -316,7 +323,7 @@ const alert = {
         //console.log(txt);
 
         const margin = 30;
-        const font_size = 22;
+        const font_size = 20;
 
         ctx.font = `${font_size}px 'Press Start 2P'`;
 
