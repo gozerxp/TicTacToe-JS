@@ -26,16 +26,20 @@ const score = {
 };
 
 const COLOR = "rgb(60, 60, 60)";
-
 const grid_size = 3;
 const margin = 0;
+const max_width = 720;
+const score_height = 60;
+const padding = 4;
+
 let turn = 1;
 let game_over = false;
 let game_array = reset(grid_size);
 
 assets.cats.onload = () => {
-    update_scoreboard(score_ctx);
-    //ai_move();
+
+    resize();
+
 };
 
 if (__touch_device__) {
@@ -43,6 +47,8 @@ if (__touch_device__) {
 } else {
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, margin, game_array, turn);
 }
+
+window.onresize = () => resize();
 
 const get_player_img = (turn) => { return turn === 1 ? assets.x : assets.o; };
 
@@ -63,6 +69,17 @@ function get_ctx_size_x (ctx, size, margin) {
 
 function get_ctx_size_y (ctx, size, margin) {
     return (ctx.canvas.height - margin * 2) / size;
+}
+
+function resize () {
+    game_ctx.canvas.width = Math.min(max_width, window.innerWidth);
+    game_ctx.canvas.height = Math.min(max_width - score_height - padding, 
+                                    window.innerHeight - score_height - padding);
+
+    score_ctx.canvas.width = game_ctx.canvas.width;
+    score_ctx.canvas.height = score_height;
+    draw_game(game_ctx, game_array, margin);
+    update_scoreboard(score_ctx);
 }
 
 function draw_game_board() {  
@@ -116,7 +133,7 @@ function input (x, y, ctx, margin, array, turn) {
 
     //space is already occupied, exit.
     if (array[x][y]) {
-        alert.pop("Space Occupied.", game_ctx);
+        //alert.pop("Space Occupied.", game_ctx);
         return;
     }
 
@@ -171,8 +188,8 @@ function update_scoreboard (ctx) {
     const parameters = {
         height: ctx.canvas.height,
         width: ctx.canvas.height,
-        margin: 15,
-        font_size: 36
+        margin: 12,
+        font_size: 28
     };
 
     draw_score_component(ctx, assets.x, score.x, 0, parameters);

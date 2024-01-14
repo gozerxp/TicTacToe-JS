@@ -2,7 +2,9 @@
 
 body {
     background-color: dodgerblue;
-    margin: 15px;
+    margin: 0 auto;
+    user-select: none;
+    overflow: hidden;
 }
 
 canvas {
@@ -10,7 +12,8 @@ canvas {
 }
 
 #game {
-    background-color: white;
+    background-color: rgb(225, 225, 225);
+    margin-bottom: 4px;
 }
 
 #score {
@@ -20,6 +23,6 @@ canvas {
 #view {
     background-color: rgb(60, 60, 60);
     width: 720px;
-    height: 716px;
+    height: 720px;
     padding: 4px;
 }
