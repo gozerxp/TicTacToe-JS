@@ -26,14 +26,9 @@ assets.cats.src = "./assets/cat.png";
 
 //***********************************
 
-const score = {
-    x: 0,
-    o: 0,
-    cats: 0
-};
-
 const settings = {
     COLOR: "rgb(60, 60, 60)",
+    font_face: "Montserrat-Medium",
     grid_size: 3,
     margin: 0,
     max_width: 720,
@@ -41,15 +36,22 @@ const settings = {
     padding: 4
 };
 
+const score = {
+    x: 0,
+    o: 0,
+    cats: 0
+};
+
 let turn = 1;
 let game_over = false;
 let game_array = reset(settings.grid_size);
 
-assets.cats.onload = () => {
-
+const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
+//draw game once font is loaded
+game_font.load().then((font) => {
+    document.fonts.add(font);
     resize();
-
-};
+});
 
 if (__touch_device__) {
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array, turn);
@@ -89,6 +91,9 @@ function resize () {
     score_ctx.canvas.height = settings.score_height;
     draw_game(game_ctx, game_array, settings.margin);
     update_scoreboard(score_ctx);
+    if (alert.active) {
+        alert.pop(game_ctx);
+    }
 }
 
 function draw_game_board() {  
@@ -142,7 +147,7 @@ function input (x, y, ctx, margin, array, turn) {
 
     //space is already occupied, exit.
     if (array[x][y]) {
-        //alert.pop("Space Occupied.", game_ctx);
+        alert.pop(game_ctx, "Space Occupied.");
         return;
     }
 
@@ -160,12 +165,12 @@ function check_game(array, turn, x, y) {
         case turn: //current turn wins
             increase_score(turn);
             game_over = true;
-            alert.pop(`${get_player_turn(turn)} Wins!`, game_ctx);
+            alert.pop(game_ctx, `${get_player_turn(turn)} Wins!`, get_player_img(turn));
             break;
         case 2: //cats
             increase_score(2);
             game_over = true;
-            alert.pop("Cats Game!", game_ctx);
+            alert.pop(game_ctx, "Cats Game!", assets.cats);
             break;
         default:
     }
@@ -198,7 +203,7 @@ function update_scoreboard (ctx) {
         height: ctx.canvas.height,
         width: ctx.canvas.height,
         margin: 12,
-        font_size: 28
+        font_size: 40
     };
 
     draw_score_component(ctx, assets.x, score.x, 0, param);
@@ -209,9 +214,9 @@ function update_scoreboard (ctx) {
 
 function draw_score_component (ctx, img, score, position, param) {
 
-    ctx.font = `${param.font_size}px 'Press Start 2P'`;
+    ctx.font = `${param.font_size}px '${settings.font_face}'`;
     
-    const txt_y = ctx.canvas.height / 2 + param.font_size / 2;
+    const txt_y = ctx.canvas.height / 2 + param.font_size / 2 - param.margin / 2;
     const item_width = param.width + param.margin + ctx.measureText(`${score}`).width;
     const x_pos = (ctx.canvas.width / 3) * position + (ctx.canvas.width / 3) / 2 - item_width / 2;
 
@@ -319,26 +324,32 @@ function draw_grid (ctx, size, margin) {
 
 const alert = {
     active: false,
-    pop: function(txt, ctx) {
+    text: '',
+    pop: function(ctx, txt=this.text, img=null) {
         
         this.active = true;
+        this.text = txt;
 
         const margin = 30;
-        const font_size = 20;
+        const font_size = 32;
+        const max_img_size = 150;
 
-        ctx.font = `${font_size}px 'Press Start 2P'`;
+        ctx.font = `${font_size}px '${settings.font_face}'`;
 
         const w = ctx.measureText(`${txt}`).width;
-        const h = font_size + margin * 2.5;
+        let h = font_size;
+        h += img !== null ? Math.min(w, max_img_size) : 0;
 
-        const size = [w + margin * 2, h];
+        const size = [w + margin * 2, h + margin * 1.25];
         const position = [ctx.canvas.width / 2 - (size[0] / 2),
-                            ctx.canvas.height / 2 - (size[1] / 2)];
+                            ctx.canvas.height / 2 - (size[1] / 2) + margin / 4];
+
+        h = img !== null ? Math.min(w, max_img_size) : 0;
 
         const txt_position = [ctx.canvas.width / 2 - w / 2, 
-                            ctx.canvas.height / 2 + font_size / 2];
+                            ctx.canvas.height / 2 + (font_size + h) / 2];
 
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = 0.8;
         ctx.fillStyle = settings.COLOR;
         ctx.beginPath();
         ctx.roundRect(...position, ...size, 10);
@@ -347,7 +358,12 @@ const alert = {
         ctx.globalAlpha = 1;
         ctx.fillStyle = "white";
         
-        ctx.fillText(`${txt}`, ...txt_position);  
+        ctx.fillText(`${txt}`, ...txt_position);
+
+        if (img !== null) {
+            h = Math.min(w, max_img_size);
+            ctx.drawImage(img, ctx.canvas.width / 2 - h / 2, txt_position[1] - h - margin, h, h);
+        }
 
     }
 };
