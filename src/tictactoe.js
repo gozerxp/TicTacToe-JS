@@ -33,8 +33,8 @@ export const settings = {
 };
 
 export const player = {
-    x: 0, // 1 == human
-    o: 1, // 0 == ai
+    x: 1, // 1 == human
+    o: 0, // 0 == ai
     get_type: function(turn) {
         return turn === 1 ? this.x : this.o;
     }
@@ -52,14 +52,14 @@ function game_reset (ctx) {
     ai_move(game_ctx, game_array, turn, settings.margin);
 }
 
+game_reset(game_ctx);
+
 const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
 //draw game once font is loaded
 game_font.load().then((font) => {
     document.fonts.add(font);
     resize_canvas(game_ctx, score_ctx, game_array);
 });
-
-game_reset(game_ctx);
 
 if (__touch_device__) {
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin);
@@ -86,15 +86,12 @@ function change_turn() {
 function ai_move(ctx, array, turn, margin) {
 
     if (!player.get_type(turn)) {
-
         const move = best_move_ai(array, turn);
         array[move.x][move.y] = turn;
         draw_game(ctx, array, margin);
         game_over = check_game(ctx, array, turn, move.x, move.y);
         change_turn();
-
     }
-
 }
 
 function input (x, y, ctx, margin) {
@@ -123,7 +120,7 @@ function input (x, y, ctx, margin) {
 
     //space is already occupied, exit.
     if (game_array[x][y]) {
-        alert.draw(ctx, "Space Occupied.");
+        alert.draw(ctx, "Space Occupied.", null);
         return;
     }
 
