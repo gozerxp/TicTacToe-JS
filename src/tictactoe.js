@@ -32,7 +32,7 @@ export const settings = {
     padding: 4
 };
 
-export const player = {
+const player = {
     x: 1, // 1 == human
     o: 0, // 0 == ai
     get_type: function(turn) {
@@ -71,16 +71,10 @@ window.onresize = () => resize_canvas(game_ctx, score_ctx, game_array);
 
 function change_turn() { 
 
-    if (game_over) {
-        return;
-    }
+    if (game_over) { return; }
 
     turn = -turn;
-
-    
-        ai_move(game_ctx, game_array, turn, settings.margin);
-
-
+    ai_move(game_ctx, game_array, turn, settings.margin);
 }
 
 function ai_move(ctx, array, turn, margin) {
@@ -96,6 +90,10 @@ function ai_move(ctx, array, turn, margin) {
 
 function input (x, y, ctx, margin) {
 
+    if (check_alert_button(x, y)) {
+        return;
+    }
+
     if (game_over) {
         game_reset(ctx);
         alert.active = false;
@@ -109,7 +107,8 @@ function input (x, y, ctx, margin) {
     }
 
     //check input bounds
-    if (x < margin || x > ctx.canvas.width - margin || y < margin || y > ctx.canvas.height - margin) {
+    if (x < margin || x > ctx.canvas.width - margin || 
+            y < margin || y > ctx.canvas.height - margin) {
         return;
     }
 
@@ -120,7 +119,7 @@ function input (x, y, ctx, margin) {
 
     //space is already occupied, exit.
     if (game_array[x][y]) {
-        alert.draw(ctx, "Space Occupied.", null);
+        alert.draw(ctx, "Space Occupied.", null, false);
         return;
     }
 
@@ -132,4 +131,16 @@ function input (x, y, ctx, margin) {
 
 }
 
+function check_alert_button(x, y) {
+    
+    if(!alert.active || !alert.button) { return false; }
 
+    if(x < alert.btn_pos[0] || x > alert.btn_pos[0] + alert.btn_pos[2]) { return false; }
+
+    if(y < alert.btn_pos[1] || y > alert.btn_pos[1] + alert.btn_pos[3]) { return false; }
+
+    console.log(`button pressed! ${x}, ${y}`);
+
+    return true;
+
+}

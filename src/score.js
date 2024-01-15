@@ -1,11 +1,30 @@
 import { score_ctx, settings } from "./tictactoe.js";
 import { assets } from "./draw.js";
 
-export const score = {
+const score = {
     x: 0,
     o: 0,
     cats: 0
 };
+
+export function increase_score(type) {
+
+    switch (type) {
+        case 1:
+            score.x++;
+            break;
+        case -1:
+            score.o++;
+            break;
+        case 2:
+            score.cats++;
+            break;
+        default:
+    }
+
+    update_scoreboard(score_ctx);
+
+}
 
 export function update_scoreboard(ctx) {
 
@@ -34,31 +53,12 @@ function draw_score_component(ctx, img, score, position, param) {
 
     ctx.drawImage(img, x_pos, 0, param.width, param.height);
 
-    const offset = -2;
+    const offset = -1;
     ctx.fillStyle = "white";
     ctx.fillText(`${score}`, x_pos + param.margin + param.width + offset, txt_y + offset);
 
     ctx.fillStyle = settings.COLOR;
     ctx.fillText(`${score}`, x_pos + param.margin + param.width, txt_y);
-
-}
-
-export function increase_score(type) {
-
-    switch (type) {
-        case 1:
-            score.x++;
-            break;
-        case -1:
-            score.o++;
-            break;
-        case 2:
-            score.cats++;
-            break;
-        default:
-    }
-
-    update_scoreboard(score_ctx);
 
 }
 

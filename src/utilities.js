@@ -10,11 +10,11 @@ export function check_game(ctx, array, turn, x, y) {
             return false;
         case turn: //current turn wins
             increase_score(turn);
-            alert.draw(ctx, `${get_player_turn(turn)} Wins!`, assets.get_image(turn));
+            alert.draw(ctx, `${get_player_turn(turn)} Wins!`, assets.get_image(turn), true);
             return true;
         case 2: //cats
             increase_score(2);
-            alert.draw(ctx, "Cats Game!", assets.cats);
+            alert.draw(ctx, "Cats Game!", assets.cats, true);
             return true;
         default:
     }
