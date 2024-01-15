@@ -5,19 +5,28 @@ Gozerxp Software
 http://www.gozerxp.com/
 */
 
+import { alert } from "./alert.js";
+import { ai_move } from "./ai.js";
+import { get_ctx_size_x, get_ctx_size_y } from "./draw.js";
+import { draw_game, draw_game_board, resize_canvas } from "./draw.js";
+import { reset_array, check_game } from "./utilities.js";
+
 const game_canvas = document.getElementById("game");
-const game_ctx = game_canvas.getContext("2d");
+export const game_ctx = game_canvas.getContext("2d");
 
 const score_canvas = document.getElementById("score");
-const score_ctx = score_canvas.getContext("2d");
+export const score_ctx = score_canvas.getContext("2d");
 
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
 
-const assets = {
+export const assets = {
     x: new Image(),
     o: new Image(),
-    cats: new Image()
+    cats: new Image(),
+    get_image: function(turn) {
+        return turn === 1 ? this.x : this.o;
+    }
 };
 
 assets.x.src = "./assets/x.png";
@@ -26,7 +35,7 @@ assets.cats.src = "./assets/cat.png";
 
 //***********************************
 
-const settings = {
+export const settings = {
     COLOR: "rgb(60, 60, 60)",
     font_face: "Montserrat-Medium",
     grid_size: 3,
@@ -36,424 +45,93 @@ const settings = {
     padding: 4
 };
 
-const score = {
-    x: 0,
-    o: 0,
-    cats: 0
+export const player = {
+    x: 1, // 1 == human
+    o: 0, // 0 == ai
+    get_type: function(turn) {
+        return turn === 1 ? this.x : this.o;
+    }
 };
 
-let turn = 1;
-let game_over = false;
-let game_array = reset(settings.grid_size);
+export const game = {
+    turn: 1,
+    game_over: false,
+    game_array: reset_array(settings.grid_size),
+    game_reset: function(ctx) {
+        this.turn = 1;
+        this.game_over = false;
+        this.game_array = reset_array(settings.grid_size);
+        draw_game_board(ctx);
+    }
+};
 
 const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
 //draw game once font is loaded
 game_font.load().then((font) => {
     document.fonts.add(font);
-    resize();
+    resize_canvas(game_ctx, score_ctx, game.game_array);
 });
 
 if (__touch_device__) {
-    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array, turn);
+    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game);
 } else {
-    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game_array, turn);
+    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game);
 }
 
-window.onresize = () => resize();
+window.onresize = () => resize_canvas(game_ctx, score_ctx, game.game_array);
 
-const get_player_img = (turn) => { return turn === 1 ? assets.x : assets.o; };
+export function change_turn() { 
 
-const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; };
+    game.turn = -game.turn;
 
-const change_turn = () => { 
-
-    turn = -turn;
-
-    if (turn === -1) {
-        ai_move(game_ctx, game_array, turn);
-    }
-};
-
-function get_ctx_size_x (ctx, size, margin) {
-    return (ctx.canvas.width - margin * 2) / size;
-}
-
-function get_ctx_size_y (ctx, size, margin) {
-    return (ctx.canvas.height - margin * 2) / size;
-}
-
-function resize () {
-    game_ctx.canvas.width = Math.min(settings.max_width, window.innerWidth);
-    game_ctx.canvas.height = Math.min(settings.max_width - settings.score_height - settings.padding, 
-                                    window.innerHeight - settings.score_height - settings.padding);
-
-    score_ctx.canvas.width = game_ctx.canvas.width;
-    score_ctx.canvas.height = settings.score_height;
-    draw_game(game_ctx, game_array, settings.margin);
-    update_scoreboard(score_ctx);
-    if (alert.active) {
-        alert.pop(game_ctx);
-    }
-}
-
-function draw_game_board() {  
-    game_ctx.clearRect(0, 0, game_ctx.canvas.width, game_ctx.canvas.height);
-    draw_grid(game_ctx, settings.grid_size, settings.margin);   
-}
-
-function draw_game (ctx, array, margin) {
-
-    const size = array.length;
-    const ctx_x = get_ctx_size_x(ctx, size, margin);
-    const ctx_y = get_ctx_size_y(ctx, size, margin);
-
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            if (array[x][y]) {                        
-                let x_pos = margin + ctx_x * x;
-                let y_pos = margin + ctx_y * y;
-                ctx.drawImage(get_player_img(array[x][y]), x_pos, y_pos, ctx_x, ctx_y);
-            }
-        }
+    if (player.get_type(game.turn) === 1) {
+        return;
     }
 
-    draw_grid(ctx, size, margin);
+    const move = ai_move(game.game_array, game.turn)
+
+    game.game_array[move.x][move.y] = game.turn;
+    draw_game(game_ctx, game.game_array, settings.margin);
+    game.game_over = check_game(game_ctx, game.game_array, game.turn, move.x, move.y);
 
 }
 
-function input (x, y, ctx, margin, array, turn) {
+function input (x, y, ctx, margin, game) {
 
-    const size = array.length;
+    const size = game.game_array.length;
 
-    if (game_over) {
-        game_array = reset(size);
+    if (game.game_over) {
         alert.active = false;
+        game.game_reset(ctx);
         return;
     }
 
     if (alert.active) {
         alert.active = false;
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        draw_game (ctx, array, margin);
+        draw_game (ctx, game.game_array, margin);
         return;
     }
 
     //check input bounds
-    if (x < margin || x > ctx.canvas.width - margin || y < margin || y > ctx.canvas.height - margin)
+    if (x < margin || x > ctx.canvas.width - margin ||
+            y < margin || y > ctx.canvas.height - margin) {
         return;
+    }
 
     x = parseInt((x - margin) / get_ctx_size_x(ctx, size, margin));
     y = parseInt((y - margin) / get_ctx_size_y(ctx, size, margin));
 
     //space is already occupied, exit.
-    if (array[x][y]) {
-        alert.pop(game_ctx, "Space Occupied.");
+    if (game.game_array[x][y]) {
+        alert.draw(ctx, "Space Occupied.");
         return;
     }
 
-    array[x][y] = turn;
+    game.game_array[x][y] = game.turn;
 
-    draw_game(ctx, array, margin);
-    check_game(array, turn, x, y);
-}
-
-function check_game(array, turn, x, y) {
-    switch (evluate_game(array, turn, x, y)) {
-        case 0: //no winner
-            change_turn();
-            break;
-        case turn: //current turn wins
-            increase_score(turn);
-            game_over = true;
-            alert.pop(game_ctx, `${get_player_turn(turn)} Wins!`, get_player_img(turn));
-            break;
-        case 2: //cats
-            increase_score(2);
-            game_over = true;
-            alert.pop(game_ctx, "Cats Game!", assets.cats);
-            break;
-        default:
-    }
-}
-
-function increase_score (type) {
-
-    switch (type) {
-        case 1:
-            score.x++;
-            break;
-        case -1: 
-            score.o++;
-            break;
-        case 2:
-            score.cats++;
-            break;
-        default:
-    }
-
-    update_scoreboard(score_ctx);
+    draw_game(ctx, game.game_array, margin);
+    game.game_over = check_game(ctx, game.game_array, game.turn, x, y);
 
 }
 
-function update_scoreboard (ctx) {
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    const param = {
-        height: ctx.canvas.height,
-        width: ctx.canvas.height,
-        margin: 12,
-        font_size: 40
-    };
-
-    draw_score_component(ctx, assets.x, score.x, 0, param);
-    draw_score_component(ctx, assets.o, score.o, 1, param);
-    draw_score_component(ctx, assets.cats, score.cats, 2, param);
-
-}
-
-function draw_score_component (ctx, img, score, position, param) {
-
-    ctx.font = `${param.font_size}px '${settings.font_face}'`;
-    
-    const txt_y = ctx.canvas.height / 2 + param.font_size / 2 - param.margin / 2;
-    const item_width = param.width + param.margin + ctx.measureText(`${score}`).width;
-    const x_pos = (ctx.canvas.width / 3) * position + (ctx.canvas.width / 3) / 2 - item_width / 2;
-
-    ctx.drawImage(img, x_pos, 0, param.width, param.height);
-
-    const offset = -2; 
-    ctx.fillStyle = "white";
-    ctx.fillText(`${score}`, x_pos + param.margin + param.width + offset, txt_y + offset);
-
-    ctx.fillStyle = settings.COLOR;
-    ctx.fillText(`${score}`, x_pos + param.margin + param.width, txt_y);    
-
-}
-
-function evluate_game (array, turn, x_pos, y_pos) {
-
-    const size = array.length;
-
-    //true until they are not
-    let scan_x = true, 
-        scan_y = true, 
-        diag1 = true, 
-        diag2 = true,
-        count_empty = false;
-
-    for (let x = 0; x < size; x++) {
-
-        //scan column
-        if (array[x_pos][x] != turn)
-            scan_x = false;
-
-        //scan row
-        if (array[x][y_pos] != turn)
-            scan_y = false;
-
-        //scan diagonal
-        if (array[x][x] != turn)
-            diag1 = false;
-        
-        //scan opposite diagonal
-        if (array[x][size - 1 - x] != turn)
-            diag2 = false;
-
-        //check for empty squares to help determine cats game
-        if (!count_empty) {
-            for (let y = 0; y < size; y++) {
-                if (!array[x][y]) {
-                    count_empty = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    //if any of the flags are still true then the current turn won.
-    if (scan_x || scan_y || diag1 || diag2) return turn;
-
-    //if no winner + no empty space found then return 2 for a cats game.
-    if (!count_empty) return 2;
-
-    // empty spaces were found, return 0 to continue game.
-    return 0;
-
-}
-
-function reset (size) {
-
-    let row = [];
-    for (let x = 0; x < size; x++) {
-        let column = [];
-        for (let y = 0; y < size; y++){
-            column.push(0);
-        }
-        row.push(column);
-    }
-
-    draw_game_board();
-    turn = 1;
-    game_over = false;
-    console.clear();
-
-    return row;
-}
-
-function draw_grid (ctx, size, margin) {
-
-    ctx.strokeStyle = settings.COLOR;
-    ctx.lineWidth = 3;
-
-    const ctx_x = get_ctx_size_x(ctx, size, margin);
-    const ctx_y = get_ctx_size_y(ctx, size, margin);
-
-    for (let x = 1; x < size; x++) {
-        ctx.beginPath();
-        ctx.moveTo(margin + x * ctx_x, margin);
-        ctx.lineTo(margin + x * ctx_x, ctx.canvas.height - margin);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(margin, margin + x * ctx_y);
-        ctx.lineTo(ctx.canvas.width -  margin, margin + x * ctx_y);
-        ctx.stroke();
-    }
-}
-
-const alert = {
-    active: false,
-    text: '',
-    pop: function(ctx, txt=this.text, img=null) {
-        
-        this.active = true;
-        this.text = txt;
-
-        const margin = 30;
-        const font_size = 32;
-        const max_img_size = 150;
-
-        ctx.font = `${font_size}px '${settings.font_face}'`;
-
-        const w = ctx.measureText(`${txt}`).width;
-        let h = font_size;
-        h += img !== null ? Math.min(w, max_img_size) : 0;
-
-        const size = [w + margin * 2, h + margin * 1.25];
-        const position = [ctx.canvas.width / 2 - (size[0] / 2),
-                            ctx.canvas.height / 2 - (size[1] / 2) + margin / 4];
-
-        h = img !== null ? Math.min(w, max_img_size) : 0;
-
-        const txt_position = [ctx.canvas.width / 2 - w / 2, 
-                            ctx.canvas.height / 2 + (font_size + h) / 2];
-
-        ctx.globalAlpha = 0.8;
-        ctx.fillStyle = settings.COLOR;
-        ctx.beginPath();
-        ctx.roundRect(...position, ...size, 10);
-        ctx.fill();
-        
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = "white";
-        
-        ctx.fillText(`${txt}`, ...txt_position);
-
-        if (img !== null) {
-            h = Math.min(w, max_img_size);
-            ctx.drawImage(img, ctx.canvas.width / 2 - h / 2, txt_position[1] - h - margin, h, h);
-        }
-
-    }
-};
-
-function ai_move(ctx, array, turn) {
-    const move = best_move(array, turn);
-    array[move.x][move.y] = turn;
-    draw_game(ctx, array, settings.margin);
-    check_game(array, turn, move.x, move.y);
-}
-
-function best_move(array, turn) {
-
-    const size = array.length;
-    const MAX_SCORE = 10 ** size;
-
-    let best_score = -Infinity;
-    let best_move;
-
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            if (!array[x][y]) {
-
-                array[x][y] = turn;                    
-                let ai_score = mini_max(x, y, array, size, turn, 0, false, MAX_SCORE);
-                array[x][y] = 0;
-
-                if (ai_score > best_score) {
-                    best_score = ai_score;
-                    best_move = { x, y };
-                    
-                    // MAX_SCORE represents 0 depth == winning move.
-                    if (best_score === MAX_SCORE) {
-                        return best_move;
-                    }
-                }
-            }
-        }
-    }
-
-    return best_move;
-}
-
-function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
-
-    switch (evluate_game (array, Maximize ? -turn : turn, x, y)) {
-        case turn:
-            return MAX_SCORE - depth;
-        case -turn:
-            return depth - MAX_SCORE;
-        case 2:
-            return 0;
-        default:
-    }
- 
-    if (Maximize) {
-
-        let best_score = -Infinity;
-        for (let x = 0; x < size; x++) {
-            for (let y = 0; y < size; y++) {
-                if (!array[x][y]) {
-
-                    array[x][y] = turn;
-                    let score = mini_max(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
-                    array[x][y] = 0;
-
-                    best_score = Math.max(score, best_score)
-                }
-            }
-        }
-
-        return best_score;
-
-    } else {
-
-        let best_score = Infinity;
-        for (let x = 0; x < size; x++) {
-            for (let y = 0; y < size; y++) {
-                if (!array[x][y]) {
- 
-                    array[x][y] = -turn;
-                    let score = mini_max(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
-                    array[x][y] = 0;
-
-                    best_score = Math.min(score, best_score);
-                }
-            }
-        }
-
-        return best_score;
-        
-    }
-}
