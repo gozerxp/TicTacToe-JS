@@ -2,16 +2,13 @@ import { settings } from "./tictactoe.js";
 
 export const alert = {
     active: false,
-    button: false,
     text: '',
     image: null,
-    btn_pos: [10, 10, 85, 85],
-    draw: function (ctx, txt = this.text, img = this.image, btn = this.button) {
+    draw: function (ctx, txt = this.text, img = this.image) {
 
         this.active = true;
         this.text = txt;
         this.image = img;
-        this.button = btn;
 
         const margin = 30;
         const font_size = 32;
@@ -38,10 +35,6 @@ export const alert = {
         ctx.roundRect(...position, ...size, 10);
         ctx.fill();
         ctx.globalAlpha = 1;
-
-        if (this.button) {
-            ctx.fillRect(...this.btn_pos);
-        }
 
         const offset = 2;
         ctx.fillText(`${txt}`, txt_position[0] + offset, txt_position[1] + offset);

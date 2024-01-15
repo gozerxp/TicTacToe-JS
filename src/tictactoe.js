@@ -90,10 +90,6 @@ function ai_move(ctx, array, turn, margin) {
 
 function input (x, y, ctx, margin) {
 
-    if (check_alert_button(x, y)) {
-        return;
-    }
-
     if (game_over) {
         game_reset(ctx);
         alert.active = false;
@@ -119,7 +115,7 @@ function input (x, y, ctx, margin) {
 
     //space is already occupied, exit.
     if (game_array[x][y]) {
-        alert.draw(ctx, "Space Occupied.", null, false);
+        alert.draw(ctx, "Space Occupied.", null);
         return;
     }
 
@@ -128,19 +124,5 @@ function input (x, y, ctx, margin) {
     draw_game(ctx, game_array, margin);
     game_over = check_game(ctx, game_array, turn, x, y);
     change_turn();
-
-}
-
-function check_alert_button(x, y) {
-    
-    if(!alert.active || !alert.button) { return false; }
-
-    if(x < alert.btn_pos[0] || x > alert.btn_pos[0] + alert.btn_pos[2]) { return false; }
-
-    if(y < alert.btn_pos[1] || y > alert.btn_pos[1] + alert.btn_pos[3]) { return false; }
-
-    console.log(`button pressed! ${x}, ${y}`);
-
-    return true;
 
 }
