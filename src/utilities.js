@@ -1,12 +1,12 @@
 import { alert } from "./alert.js";
 import { increase_score } from "./score.js";
-import { change_turn, assets } from "./tictactoe.js";
+import { assets } from "./draw.js";
 
+const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; };
 
 export function check_game(ctx, array, turn, x, y) {
     switch (evluate_game(array, turn, x, y)) {
         case 0: //no winner
-            change_turn();
             return false;
         case turn: //current turn wins
             increase_score(turn);
@@ -66,8 +66,8 @@ export function evluate_game(array, turn, x_pos, y_pos) {
 
     // empty spaces were found, return 0 to continue game.
     return 0;
-
 }
+
 export function reset_array(size) {
 
     let row = [];
@@ -81,7 +81,5 @@ export function reset_array(size) {
 
     return row;
 }
-
-export const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; };
 
 

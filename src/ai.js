@@ -1,11 +1,6 @@
 import { evluate_game } from "./utilities.js";
 
-export function ai_move(array, turn) {
-
-    return best_move(array, turn);   
-}
-
-function best_move(array, turn) {
+export function best_move_ai(array, turn) {
 
     const size = array.length;
     const MAX_SCORE = 10 ** size;

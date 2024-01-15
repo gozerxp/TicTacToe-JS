@@ -6,8 +6,8 @@ http://www.gozerxp.com/
 */
 
 import { alert } from "./alert.js";
-import { ai_move } from "./ai.js";
-import { get_ctx_size_x, get_ctx_size_y } from "./draw.js";
+import { best_move_ai } from "./ai.js";
+import { get_ctx_size } from "./draw.js";
 import { draw_game, draw_game_board, resize_canvas } from "./draw.js";
 import { reset_array, check_game } from "./utilities.js";
 
@@ -19,19 +19,6 @@ export const score_ctx = score_canvas.getContext("2d");
 
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
-
-export const assets = {
-    x: new Image(),
-    o: new Image(),
-    cats: new Image(),
-    get_image: function(turn) {
-        return turn === 1 ? this.x : this.o;
-    }
-};
-
-assets.x.src = "./assets/x.png";
-assets.o.src = "./assets/o.png";
-assets.cats.src = "./assets/cat.png";
 
 //***********************************
 
@@ -46,91 +33,105 @@ export const settings = {
 };
 
 export const player = {
-    x: 1, // 1 == human
-    o: 0, // 0 == ai
+    x: 0, // 1 == human
+    o: 1, // 0 == ai
     get_type: function(turn) {
         return turn === 1 ? this.x : this.o;
     }
 };
 
-export const game = {
-    turn: 1,
-    game_over: false,
-    game_array: reset_array(settings.grid_size),
-    game_reset: function(ctx) {
-        this.turn = 1;
-        this.game_over = false;
-        this.game_array = reset_array(settings.grid_size);
-        draw_game_board(ctx);
-    }
-};
+let turn,
+    game_over,
+    game_array;
+
+function game_reset (ctx) {
+    turn = 1;
+    game_over = false;
+    game_array = reset_array(settings.grid_size);
+    draw_game_board(ctx);
+    ai_move(game_ctx, game_array, turn, settings.margin);
+}
 
 const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
 //draw game once font is loaded
 game_font.load().then((font) => {
     document.fonts.add(font);
-    resize_canvas(game_ctx, score_ctx, game.game_array);
+    resize_canvas(game_ctx, score_ctx, game_array);
 });
 
+game_reset(game_ctx);
+
 if (__touch_device__) {
-    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game);
+    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin);
 } else {
-    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game);
+    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin);
 }
 
-window.onresize = () => resize_canvas(game_ctx, score_ctx, game.game_array);
+window.onresize = () => resize_canvas(game_ctx, score_ctx, game_array);
 
-export function change_turn() { 
+function change_turn() { 
 
-    game.turn = -game.turn;
-
-    if (player.get_type(game.turn) === 1) {
+    if (game_over) {
         return;
     }
 
-    const move = ai_move(game.game_array, game.turn)
+    turn = -turn;
 
-    game.game_array[move.x][move.y] = game.turn;
-    draw_game(game_ctx, game.game_array, settings.margin);
-    game.game_over = check_game(game_ctx, game.game_array, game.turn, move.x, move.y);
+    
+        ai_move(game_ctx, game_array, turn, settings.margin);
+
 
 }
 
-function input (x, y, ctx, margin, game) {
+function ai_move(ctx, array, turn, margin) {
 
-    const size = game.game_array.length;
+    if (!player.get_type(turn)) {
 
-    if (game.game_over) {
+        const move = best_move_ai(array, turn);
+        array[move.x][move.y] = turn;
+        draw_game(ctx, array, margin);
+        game_over = check_game(ctx, array, turn, move.x, move.y);
+        change_turn();
+
+    }
+
+}
+
+function input (x, y, ctx, margin) {
+
+    if (game_over) {
+        game_reset(ctx);
         alert.active = false;
-        game.game_reset(ctx);
         return;
     }
 
-    if (alert.active) {
+    if (alert.active) { 
         alert.active = false;
-        draw_game (ctx, game.game_array, margin);
+        draw_game(ctx, game_array, margin);
         return;
     }
 
     //check input bounds
-    if (x < margin || x > ctx.canvas.width - margin ||
-            y < margin || y > ctx.canvas.height - margin) {
+    if (x < margin || x > ctx.canvas.width - margin || y < margin || y > ctx.canvas.height - margin) {
         return;
     }
 
-    x = parseInt((x - margin) / get_ctx_size_x(ctx, size, margin));
-    y = parseInt((y - margin) / get_ctx_size_y(ctx, size, margin));
+    const size = game_array.length;
+    const ctx_size = get_ctx_size(ctx, size, margin);
+    x = parseInt((x - margin) / ctx_size.x);
+    y = parseInt((y - margin) / ctx_size.y);
 
     //space is already occupied, exit.
-    if (game.game_array[x][y]) {
+    if (game_array[x][y]) {
         alert.draw(ctx, "Space Occupied.");
         return;
     }
 
-    game.game_array[x][y] = game.turn;
+    game_array[x][y] = turn;
 
-    draw_game(ctx, game.game_array, margin);
-    game.game_over = check_game(ctx, game.game_array, game.turn, x, y);
+    draw_game(ctx, game_array, margin);
+    game_over = check_game(ctx, game_array, turn, x, y);
+    change_turn();
 
 }
 

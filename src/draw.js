@@ -1,13 +1,24 @@
 import { alert } from "./alert.js";
 import { update_scoreboard } from "./score.js";
-import { settings, assets } from "./tictactoe.js";
+import { settings } from "./tictactoe.js";
 
-export function get_ctx_size_x(ctx, size, margin) {
-    return (ctx.canvas.width - margin * 2) / size;
-}
 
-export function get_ctx_size_y(ctx, size, margin) {
-    return (ctx.canvas.height - margin * 2) / size;
+export const assets = {
+    x: new Image(),
+    o: new Image(),
+    cats: new Image(),
+    get_image: function (turn) {
+        return turn === 1 ? this.x : this.o;
+    }
+};
+
+assets.x.src = "./assets/x.png";
+assets.o.src = "./assets/o.png";
+assets.cats.src = "./assets/cat.png";
+
+export function get_ctx_size(ctx, size, margin) {
+    return { x: (ctx.canvas.width - margin * 2) / size,
+            y: (ctx.canvas.height - margin * 2) / size };
 }
 
 export function draw_game_board(ctx) {
@@ -20,18 +31,17 @@ export function draw_grid(ctx, size, margin) {
     ctx.strokeStyle = settings.COLOR;
     ctx.lineWidth = 3;
 
-    const ctx_x = get_ctx_size_x(ctx, size, margin);
-    const ctx_y = get_ctx_size_y(ctx, size, margin);
+    const ctx_size = get_ctx_size(ctx, size, margin);
 
     for (let x = 1; x < size; x++) {
         ctx.beginPath();
-        ctx.moveTo(margin + x * ctx_x, margin);
-        ctx.lineTo(margin + x * ctx_x, ctx.canvas.height - margin);
+        ctx.moveTo(margin + x * ctx_size.x, margin);
+        ctx.lineTo(margin + x * ctx_size.x, ctx.canvas.height - margin);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(margin, margin + x * ctx_y);
-        ctx.lineTo(ctx.canvas.width - margin, margin + x * ctx_y);
+        ctx.moveTo(margin, margin + x * ctx_size.y);
+        ctx.lineTo(ctx.canvas.width - margin, margin + x * ctx_size.y);
         ctx.stroke();
     }
 }
@@ -39,17 +49,15 @@ export function draw_grid(ctx, size, margin) {
 export function draw_game(ctx, array, margin) {
 
     const size = array.length;
-    const ctx_x = get_ctx_size_x(ctx, size, margin);
-    const ctx_y = get_ctx_size_y(ctx, size, margin);
-
+    const ctx_size = get_ctx_size(ctx, size, margin);
+    
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     for (let x = 0; x < size; x++) {
         for (let y = 0; y < size; y++) {
             if (array[x][y]) {
-                let x_pos = margin + ctx_x * x;
-                let y_pos = margin + ctx_y * y;
-                ctx.drawImage(assets.get_image(array[x][y]), x_pos, y_pos, ctx_x, ctx_y);
+                let pos = {x: margin + ctx_size.x * x, y: margin + ctx_size.y * y};
+                ctx.drawImage(assets.get_image(array[x][y]), pos.x, pos.y, ctx_size.x, ctx_size.y);
             }
         }
     }
@@ -72,4 +80,3 @@ export function resize_canvas(game_ctx, score_ctx, game_array) {
         alert.draw(game_ctx);
     }
 }
-
