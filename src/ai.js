@@ -1,36 +1,40 @@
 import { game } from "./utilities.js";
 
-export function ai(array, turn) {
+export const ai = {
 
-    const size = array.length;
-    const MAX_SCORE = 10 ** size;
+    best_move: function (array, turn) {
 
-    let best_score = -Infinity;
-    let best_move;
+        const size = array.length;
+        const MAX_SCORE = 10 ** size;
 
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            if (!array[x][y]) {
+        let best_score = -Infinity;
+        let best_move;
 
-                array[x][y] = turn;
-                let ai_score = mini_max(x, y, array, size, turn, 0, false, MAX_SCORE);
-                array[x][y] = 0;
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                if (!array[x][y]) {
 
-                if (ai_score > best_score) {
-                    best_score = ai_score;
-                    best_move = { x, y };
+                    array[x][y] = turn;
+                    let ai_score = mini_max(x, y, array, size, turn, 0, false, MAX_SCORE);
+                    array[x][y] = 0;
 
-                    // MAX_SCORE represents 0 depth == winning move.
-                    if (best_score === MAX_SCORE) {
-                        return best_move;
+                    if (ai_score > best_score) {
+                        best_score = ai_score;
+                        best_move = { x, y };
+
+                        // MAX_SCORE represents 0 depth == winning move.
+                        if (best_score === MAX_SCORE) {
+                            return best_move;
+                        }
                     }
                 }
             }
         }
+
+        return best_move;
     }
 
-    return best_move;
-}
+};
 
 function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
 

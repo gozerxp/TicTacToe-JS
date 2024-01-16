@@ -89,7 +89,7 @@ function ai_move(ctx, array, turn, margin) {
 
     // !player == not human
     if (!player.get_type(turn)) {
-        const move = ai(array, turn);
+        const move = ai.best_move(array, turn);
         array[move.x][move.y] = turn;
         draw.draw_game(ctx, array, margin);
         game_over = game.check_game(ctx, array, turn, move.x, move.y);
