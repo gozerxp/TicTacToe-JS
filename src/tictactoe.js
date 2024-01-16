@@ -23,7 +23,7 @@ const __touch_device__ = window.ontouchstart !== undefined;
 
 export const settings = {
 
-    COLOR: "rgb(60, 60, 60)",
+    COLOR: "rgb(50, 50, 50)",
     font_face: "Montserrat",
     grid_size: 3,
     margin: 0,
