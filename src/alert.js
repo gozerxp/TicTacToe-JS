@@ -1,9 +1,11 @@
 import { settings } from "./tictactoe.js";
 
 export const alert = {
+
     active: false,
     text: '',
     image: null,
+
     draw: function (ctx, txt = this.text, img = this.image) {
 
         this.active = true;
@@ -47,6 +49,6 @@ export const alert = {
             ctx.drawImage(this.image, ctx.canvas.width / 2 - h / 2, txt_position[1] - h - margin, h, h);
         }
 
-
     }
+    
 };

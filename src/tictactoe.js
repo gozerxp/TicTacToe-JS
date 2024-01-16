@@ -22,6 +22,7 @@ const __touch_device__ = window.ontouchstart !== undefined;
 //***********************************
 
 export const settings = {
+
     COLOR: "rgb(60, 60, 60)",
     font_face: "Montserrat-Medium",
     grid_size: 3,
@@ -29,14 +30,18 @@ export const settings = {
     max_width: 720,
     score_height: 60,
     padding: 4
+
 };
 
 const player = {
+
     x: 1, // 1 == human
     o: 0, // 0 == ai
-    get_type: function(turn) {
+
+    get_type: function (turn) {
         return turn === 1 ? this.x : this.o;
     }
+
 };
 
 let turn,
@@ -44,11 +49,13 @@ let turn,
     game_array;
 
 function game_reset (ctx) {
+
     turn = 1;
     game_over = false;
     game_array = game.reset_array(settings.grid_size);
     draw.draw_game_board(ctx);
     ai_move(game_ctx, game_array, turn, settings.margin);
+
 }
 
 game_reset(game_ctx);
@@ -56,8 +63,10 @@ game_reset(game_ctx);
 const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
 //draw game once font is loaded
 game_font.load().then((font) => {
+
     document.fonts.add(font);
     draw.resize_canvas(game_ctx, score_ctx, game_array);
+
 });
 
 if (__touch_device__) {
@@ -74,6 +83,7 @@ function change_turn() {
 
     turn = -turn;
     ai_move(game_ctx, game_array, turn, settings.margin);
+
 }
 
 function ai_move(ctx, array, turn, margin) {
@@ -83,7 +93,7 @@ function ai_move(ctx, array, turn, margin) {
         array[move.x][move.y] = turn;
         draw.draw_game(ctx, array, margin);
         game_over = game.check_game(ctx, array, turn, move.x, move.y);
-        change_turn();
+        change_turn();  
     }
 }
 

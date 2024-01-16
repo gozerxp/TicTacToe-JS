@@ -3,12 +3,15 @@ import { score } from "./score.js";
 import { settings } from "./tictactoe.js";
 
 export const assets = {
+
     x: new Image(),
     o: new Image(),
     cats: new Image(),
+    
     get_image: function (turn) {
         return turn === 1 ? this.x : this.o;
     }
+
 };
 
 assets.x.src = "./assets/x.png";
