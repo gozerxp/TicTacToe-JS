@@ -1,14 +1,13 @@
 /* Written by Dan Andersen
 Art by Ferris Andersen
 
-Gozerxp Software
+2024 © Gozerxp Software LLC
 http://www.gozerxp.com/
 */
 
 import { alert } from "./alert.js";
 import { best_move_ai } from "./ai.js";
-import { get_ctx_size } from "./draw.js";
-import { draw_game, draw_game_board, resize_canvas } from "./draw.js";
+import { draw } from "./draw.js";
 import { reset_array, check_game } from "./utilities.js";
 
 const game_canvas = document.getElementById("game");
@@ -48,7 +47,7 @@ function game_reset (ctx) {
     turn = 1;
     game_over = false;
     game_array = reset_array(settings.grid_size);
-    draw_game_board(ctx);
+    draw.draw_game_board(ctx);
     ai_move(game_ctx, game_array, turn, settings.margin);
 }
 
@@ -58,7 +57,7 @@ const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings
 //draw game once font is loaded
 game_font.load().then((font) => {
     document.fonts.add(font);
-    resize_canvas(game_ctx, score_ctx, game_array);
+    draw.resize_canvas(game_ctx, score_ctx, game_array);
 });
 
 if (__touch_device__) {
@@ -67,7 +66,7 @@ if (__touch_device__) {
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin);
 }
 
-window.onresize = () => resize_canvas(game_ctx, score_ctx, game_array);
+window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, game_array);
 
 function change_turn() { 
 
@@ -82,7 +81,7 @@ function ai_move(ctx, array, turn, margin) {
     if (!player.get_type(turn)) {
         const move = best_move_ai(array, turn);
         array[move.x][move.y] = turn;
-        draw_game(ctx, array, margin);
+        draw.draw_game(ctx, array, margin);
         game_over = check_game(ctx, array, turn, move.x, move.y);
         change_turn();
     }
@@ -98,7 +97,7 @@ function input (x, y, ctx, margin) {
 
     if (alert.active) { 
         alert.active = false;
-        draw_game(ctx, game_array, margin);
+        draw.draw_game(ctx, game_array, margin);
         return;
     }
 
@@ -109,7 +108,7 @@ function input (x, y, ctx, margin) {
     }
 
     const size = game_array.length;
-    const ctx_size = get_ctx_size(ctx, size, margin);
+    const ctx_size = draw.get_ctx_size(ctx, size, margin);
     x = parseInt((x - margin) / ctx_size.x);
     y = parseInt((y - margin) / ctx_size.y);
 
@@ -121,7 +120,7 @@ function input (x, y, ctx, margin) {
 
     game_array[x][y] = turn;
 
-    draw_game(ctx, game_array, margin);
+    draw.draw_game(ctx, game_array, margin);
     game_over = check_game(ctx, game_array, turn, x, y);
     change_turn();
 
