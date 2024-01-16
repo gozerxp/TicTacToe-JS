@@ -34,19 +34,19 @@ export const game = {
         for (let x = 0; x < size; x++) {
 
             //scan column
-            if (array[x_pos][x] != turn)
+            if (array[x_pos][x] !== turn)
                 scan_x = false;
 
             //scan row
-            if (array[x][y_pos] != turn)
+            if (array[x][y_pos] !== turn)
                 scan_y = false;
 
             //scan diagonal
-            if (array[x][x] != turn)
+            if (array[x][x] !== turn)
                 diag1 = false;
 
             //scan opposite diagonal
-            if (array[x][size - 1 - x] != turn)
+            if (array[x][size - 1 - x] !== turn)
                 diag2 = false;
 
             //check for empty squares to help determine cats game
