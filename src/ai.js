@@ -1,6 +1,6 @@
-import { evluate_game } from "./utilities.js";
+import { game } from "./utilities.js";
 
-export function best_move_ai(array, turn) {
+export function ai(array, turn) {
 
     const size = array.length;
     const MAX_SCORE = 10 ** size;
@@ -34,7 +34,7 @@ export function best_move_ai(array, turn) {
 
 function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
 
-    switch (evluate_game(array, Maximize ? -turn : turn, x, y)) {
+    switch (game.evluate_game(array, Maximize ? -turn : turn, x, y)) {
         case turn:
             return MAX_SCORE - depth;
         case -turn:

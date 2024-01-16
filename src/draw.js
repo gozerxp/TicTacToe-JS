@@ -1,7 +1,6 @@
 import { alert } from "./alert.js";
-import { update_scoreboard } from "./score.js";
+import { score } from "./score.js";
 import { settings } from "./tictactoe.js";
-
 
 export const assets = {
     x: new Image(),
@@ -16,7 +15,10 @@ assets.x.src = "./assets/x.png";
 assets.o.src = "./assets/o.png";
 assets.cats.src = "./assets/cat.png";
 
+/********************************************************** */
+
 export const draw = {
+
     get_ctx_size: function (ctx, size, margin) {
         return { x: (ctx.canvas.width - margin * 2) / size,
                 y: (ctx.canvas.height - margin * 2) / size };
@@ -66,16 +68,16 @@ export const draw = {
         this.draw_grid(ctx, size, margin);
     },
 
-    resize_canvas: function (game_ctx, score_ctx, game_array) {
-        game_ctx.canvas.width = Math.min(settings.max_width, window.innerWidth);
-        game_ctx.canvas.height = Math.min(settings.max_width - settings.score_height - settings.padding,
-            window.innerHeight - settings.score_height - settings.padding);
+    resize_canvas: function (game_ctx, score_ctx, array) {
+
+        game_ctx.canvas.height = window.innerHeight - settings.score_height - settings.padding;
+        game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth);
 
         score_ctx.canvas.width = game_ctx.canvas.width;
         score_ctx.canvas.height = settings.score_height;
         
-        this.draw_game(game_ctx, game_array, settings.margin);
-        update_scoreboard(score_ctx);
+        this.draw_game(game_ctx, array, settings.margin);
+        score.update_scoreboard(score_ctx);
         if (alert.active) {
             alert.draw(game_ctx);
         }

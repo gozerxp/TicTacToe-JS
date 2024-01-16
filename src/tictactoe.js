@@ -6,9 +6,9 @@ http://www.gozerxp.com/
 */
 
 import { alert } from "./alert.js";
-import { best_move_ai } from "./ai.js";
+import { ai } from "./ai.js";
 import { draw } from "./draw.js";
-import { reset_array, check_game } from "./utilities.js";
+import { game } from "./utilities.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -46,7 +46,7 @@ let turn,
 function game_reset (ctx) {
     turn = 1;
     game_over = false;
-    game_array = reset_array(settings.grid_size);
+    game_array = game.reset_array(settings.grid_size);
     draw.draw_game_board(ctx);
     ai_move(game_ctx, game_array, turn, settings.margin);
 }
@@ -79,10 +79,10 @@ function change_turn() {
 function ai_move(ctx, array, turn, margin) {
 
     if (!player.get_type(turn)) {
-        const move = best_move_ai(array, turn);
+        const move = ai(array, turn);
         array[move.x][move.y] = turn;
         draw.draw_game(ctx, array, margin);
-        game_over = check_game(ctx, array, turn, move.x, move.y);
+        game_over = game.check_game(ctx, array, turn, move.x, move.y);
         change_turn();
     }
 }
@@ -121,7 +121,7 @@ function input (x, y, ctx, margin) {
     game_array[x][y] = turn;
 
     draw.draw_game(ctx, game_array, margin);
-    game_over = check_game(ctx, game_array, turn, x, y);
+    game_over = game.check_game(ctx, game_array, turn, x, y);
     change_turn();
 
 }
