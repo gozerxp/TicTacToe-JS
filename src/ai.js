@@ -15,7 +15,7 @@ export const ai = {
                 if (!array[x][y]) {
 
                     array[x][y] = turn;
-                    let ai_score = mini_max(x, y, array, size, turn, 0, false, MAX_SCORE);
+                    let ai_score = minimax(x, y, array, size, turn, 0, false, MAX_SCORE);
                     array[x][y] = 0;
 
                     if (ai_score > best_score) {
@@ -36,7 +36,7 @@ export const ai = {
 
 };
 
-function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
+function minimax(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
 
     switch (game.evluate_game(array, Maximize ? -turn : turn, x, y)) {
         case turn:
@@ -56,7 +56,7 @@ function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
                 if (!array[x][y]) {
 
                     array[x][y] = turn;
-                    let score = mini_max(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
+                    let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
                     array[x][y] = 0;
 
                     best_score = Math.max(score, best_score);
@@ -74,7 +74,7 @@ function mini_max(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
                 if (!array[x][y]) {
 
                     array[x][y] = -turn;
-                    let score = mini_max(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
+                    let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
                     array[x][y] = 0;
 
                     best_score = Math.min(score, best_score);
