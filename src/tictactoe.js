@@ -27,8 +27,7 @@ export const settings = {
     font_face: "Montserrat-Medium",
     grid_size: 3,
     margin: 0,
-    max_width: 720,
-    score_height: 60,
+    score_height: 75,
     padding: 4
 
 };
@@ -88,6 +87,7 @@ function change_turn() {
 
 function ai_move(ctx, array, turn, margin) {
 
+    // !player == not human
     if (!player.get_type(turn)) {
         const move = ai(array, turn);
         array[move.x][move.y] = turn;
