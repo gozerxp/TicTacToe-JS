@@ -32,7 +32,7 @@ export const score = {
         const param = {
             height: ctx.canvas.height,
             width: ctx.canvas.height,
-            margin: 12,
+            margin: 10,
             font_size: 40
         };
 

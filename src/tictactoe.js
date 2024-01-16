@@ -34,8 +34,8 @@ export const settings = {
 
 const player = {
 
-    x: 0, // 1 == human
-    o: 1, // 0 == ai
+    x: 1, // 1 == human
+    o: 0, // 0 == ai
 
     get_type: function (turn) {
         return turn === 1 ? this.x : this.o;
