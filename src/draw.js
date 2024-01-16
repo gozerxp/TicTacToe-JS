@@ -74,7 +74,7 @@ export const draw = {
     resize_canvas: function (game_ctx, score_ctx, array) {
 
         game_ctx.canvas.height = window.innerHeight - settings.score_height - settings.padding * 3;
-        game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth);
+        game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth - settings.padding * 2);
 
         score_ctx.canvas.width = game_ctx.canvas.width;
         score_ctx.canvas.height = settings.score_height;
