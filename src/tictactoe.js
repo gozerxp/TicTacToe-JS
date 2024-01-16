@@ -1,7 +1,7 @@
 /* Written by Dan Andersen
 Art by Ferris Andersen
 
-2024 © Gozerxp Software LLC
+2024 Gozerxp Software LLC
 http://www.gozerxp.com/
 */
 
@@ -19,12 +19,12 @@ export const score_ctx = score_canvas.getContext("2d");
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
 
-//***********************************
+/* ***********************************/
 
 export const settings = {
 
     COLOR: "rgb(60, 60, 60)",
-    font_face: "Montserrat-Medium",
+    font_face: "Montserrat",
     grid_size: 3,
     margin: 0,
     score_height: 75,
@@ -34,8 +34,8 @@ export const settings = {
 
 const player = {
 
-    x: 1, // 1 == human
-    o: 0, // 0 == ai
+    x: 0, // 1 == human
+    o: 1, // 0 == ai
 
     get_type: function (turn) {
         return turn === 1 ? this.x : this.o;
@@ -46,16 +46,6 @@ const player = {
 let turn,
     game_over,
     game_array;
-
-function game_reset (ctx) {
-
-    turn = 1;
-    game_over = false;
-    game_array = game.reset_array(settings.grid_size);
-    draw.draw_game_board(ctx);
-    ai_move(game_ctx, game_array, turn, settings.margin);
-
-}
 
 game_reset(game_ctx);
 
@@ -76,12 +66,24 @@ if (__touch_device__) {
 
 window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, game_array);
 
-function change_turn() { 
+/* ***********************************/
 
-    if (game_over) { return; }
+function game_reset (ctx) {
 
-    turn = -turn;
+    turn = 1;
+    game_over = false;
+    game_array = game.reset_array(settings.grid_size);
+    draw.draw_game_board(ctx);
     ai_move(game_ctx, game_array, turn, settings.margin);
+
+}
+
+function register_move(ctx, margin, array, turn, x, y) {
+    
+    array[x][y] = turn;
+    draw.draw_game(ctx, array, margin);
+    game_over = game.check_game(ctx, array, turn, x, y);
+    change_turn();
 
 }
 
@@ -90,11 +92,17 @@ function ai_move(ctx, array, turn, margin) {
     // !player == not human
     if (!player.get_type(turn)) {
         const move = ai.best_move(array, turn);
-        array[move.x][move.y] = turn;
-        draw.draw_game(ctx, array, margin);
-        game_over = game.check_game(ctx, array, turn, move.x, move.y);
-        change_turn();  
+        register_move(ctx, margin, array, turn, move.x, move.y);
     }
+}
+
+function change_turn() { 
+
+    if (game_over) { return; }
+
+    turn = -turn;
+    ai_move(game_ctx, game_array, turn, settings.margin);
+
 }
 
 function input (x, y, ctx, margin) {
@@ -128,10 +136,6 @@ function input (x, y, ctx, margin) {
         return;
     }
 
-    game_array[x][y] = turn;
-
-    draw.draw_game(ctx, game_array, margin);
-    game_over = game.check_game(ctx, game_array, turn, x, y);
-    change_turn();
+    register_move(ctx, margin, game_array, turn, x, y);
 
 }
