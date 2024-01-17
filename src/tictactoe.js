@@ -53,8 +53,6 @@ async function load_game() {
         await __delay__(1);
     }
 
-    console.log("game ready.");
-    
     draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 }
 
