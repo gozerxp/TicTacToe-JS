@@ -122,6 +122,11 @@ function input (x, y, ctx, margin) {
         return;
     }
 
+    // don't register a move if not human
+    if (!player.get_type(turn)) {
+        return;
+    }
+
     //check input bounds
     if (x < margin || x > ctx.canvas.width - margin || 
             y < margin || y > ctx.canvas.height - margin) {
