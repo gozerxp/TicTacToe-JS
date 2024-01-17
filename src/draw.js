@@ -1,12 +1,16 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
 import { settings } from "./tictactoe.js";
+import { player_select } from "./player_select.js";
 
 export const assets = {
 
     x: new Image(),
     o: new Image(),
     cats: new Image(),
+    gear: new Image(),
+    toggle_on: new Image(),
+    toggle_off: new Image(),
     
     get_image: function (turn) {
         return turn === 1 ? this.x : this.o;
@@ -14,9 +18,12 @@ export const assets = {
 
 };
 
+assets.toggle_on.src = "./assets/toggle_on.png";
+assets.toggle_off.src = "./assets/toggle_off.png";
 assets.x.src = "./assets/x.png";
 assets.o.src = "./assets/o.png";
 assets.cats.src = "./assets/cat.png";
+assets.gear.src = "./assets/gear.png";
 
 /********************************************************** */
 
@@ -75,15 +82,17 @@ export const draw = {
 
         const title = "TicTacToe.js";
 
-        let font_size = 45;
+        let font_size = 40;
         const offset = 2;
         
-        font_size = reduce_font(ctx, title, font_size, ctx.canvas.width / 1.75);
+        font_size = this.reduce_font(ctx, title, font_size, ctx.canvas.width / 1.75);
 
         ctx.font = `${font_size}px '${settings.font_face}'`;
 
         let y = (ctx.canvas.height / 2) + font_size / 4;
         let x = ctx.canvas.width / 2 - (ctx.measureText(title).width / 2);
+
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         ctx.fillStyle = "white";
         ctx.fillText(title, x + offset, y + offset);
@@ -91,11 +100,13 @@ export const draw = {
         ctx.fillStyle = settings.COLOR;
         ctx.fillText(title, x, y);
 
+        player_select.draw_icon(ctx);
+
     },
 
     resize_canvas: function (game_ctx, score_ctx, title_ctx, array) {
 
-        game_ctx.canvas.height = window.innerHeight - settings.bar_height * 2 - settings.padding * 4;
+        game_ctx.canvas.height = Math.max(window.innerHeight - settings.bar_height * 2 - settings.padding * 4, 325);
         game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth - settings.padding * 2);
 
         score_ctx.canvas.width = game_ctx.canvas.width;
@@ -109,19 +120,24 @@ export const draw = {
         this.draw_game(game_ctx, array, settings.margin);
 
         score.update_scoreboard(score_ctx);
+
+        if (player_select.active) {
+            player_select.draw(game_ctx);
+        }
+
         if (alert.active) {
             alert.draw(game_ctx);
         }
+    },
+
+    reduce_font: function (ctx, text, font_size, max_size) {
+
+        ctx.font = `${font_size}px '${settings.font_face}'`;
+        while(ctx.measureText(text).width > max_size) {
+            font_size--;
+            ctx.font = `${font_size}px  '${settings.font_face}'`;
+        }
+        return font_size;
     }
 
 };
-
-function reduce_font (ctx, text, font_size, max_size) {
-
-    ctx.font = `${font_size}px '${settings.font_face}'`;
-    while(ctx.measureText(text).width > max_size) {
-        font_size--;
-        ctx.font = `${font_size}px  '${settings.font_face}'`;
-    }
-    return font_size;
-}

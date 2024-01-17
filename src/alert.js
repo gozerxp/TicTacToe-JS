@@ -1,4 +1,5 @@
 import { settings } from "./tictactoe.js";
+import { draw } from "./draw.js";
 
 export const alert = {
 
@@ -13,10 +14,12 @@ export const alert = {
         this.image = img;
 
         const margin = 30;
-        const font_size = 32;
+        let font_size = 40; //34;
         const max_img_size = 150;
 
         ctx.font = `${font_size}px '${settings.font_face}'`;
+
+        font_size = draw.reduce_font(ctx, txt, font_size, ctx.canvas.width / 1.3 - margin);
 
         const w = ctx.measureText(`${txt}`).width;
         let h = font_size;
@@ -31,10 +34,10 @@ export const alert = {
         const txt_position = [ctx.canvas.width / 2 - w / 2,
         ctx.canvas.height / 2 + (font_size + h) / 2];
 
-        ctx.globalAlpha = 0.75;
+        ctx.globalAlpha = settings.alpha;
         ctx.fillStyle = settings.COLOR;
         ctx.beginPath();
-        ctx.roundRect(...position, ...size, 10);
+        ctx.roundRect(...position, ...size, settings.corner_radius);
         ctx.fill();
         ctx.globalAlpha = 1;
 

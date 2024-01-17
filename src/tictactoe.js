@@ -9,6 +9,7 @@ import { alert } from "./alert.js";
 import { ai } from "./ai.js";
 import { draw } from "./draw.js";
 import { game } from "./utilities.js";
+import { player_select } from "./player_select.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -30,20 +31,29 @@ export const settings = {
     font_face: "Montserrat",
     grid_size: 3,
     margin: 0,
-    bar_height: 75,
-    padding: 4
+    bar_height: 55,
+    padding: 4,
+    corner_radius: 15,
+    alpha: 0.85
 
 };
 
-const player = {
+export const player = {
 
     x: 1, // 1 == human
     o: 0, // 0 == ai
 
-    get_type: function (turn) {
-        return turn === 1 ? this.x : this.o;
-    }
+    get_type: function (player) {
+        return player === 1 ? this.x : this.o;
+    },
 
+    update_type: function (player, new_type) {
+        if (player === 1) {
+            this.x = new_type;
+        } else {
+            this.o = new_type;
+        }
+    }
 };
 
 let turn,
@@ -62,22 +72,24 @@ game_font.load().then((font) => {
 });
 
 if (__touch_device__) {
-    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin);
+    game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array);
+    title_canvas.ontouchstart = (e) => player_select.open(e.pageX, e.pageY, title_ctx, game_ctx, game_array, settings.margin);
 } else {
-    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin);
+    game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game_array);
+    title_canvas.onclick = (e) => player_select.open(e.clientX, e.clientY, title_ctx, game_ctx, game_array, settings.margin);
 }
 
 window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 
 /* ***********************************/
 
-function game_reset (ctx) {
+export function game_reset (ctx) {
 
     turn = 1;
     game_over = false;
     game_array = game.reset_array(settings.grid_size);
     draw.draw_game_board(ctx);
-    ai_move(game_ctx, game_array, turn, settings.margin);
+    ai_move(ctx, game_array, turn, settings.margin);
 
 }
 
@@ -108,7 +120,13 @@ function change_turn() {
 
 }
 
-function input (x, y, ctx, margin) {
+function input (x, y, ctx, margin, array) {
+
+    //player select menu is open
+    if (player_select.active) {
+        player_select.toggle_player_state(ctx, x, y, array, margin);
+        return;
+    }
 
     if (game_over) {
         game_reset(ctx);
@@ -118,7 +136,7 @@ function input (x, y, ctx, margin) {
 
     if (alert.active) { 
         alert.active = false;
-        draw.draw_game(ctx, game_array, margin);
+        draw.draw_game(ctx, array, margin);
         return;
     }
 
@@ -133,17 +151,17 @@ function input (x, y, ctx, margin) {
         return;
     }
 
-    const size = game_array.length;
+    const size = array.length;
     const ctx_size = draw.get_ctx_size(ctx, size, margin);
-    x = parseInt((x - margin) / ctx_size.x);
-    y = parseInt((y - margin) / ctx_size.y);
+    x = parseInt((x - margin - settings.padding) / ctx_size.x);
+    y = parseInt((y - margin - settings.bar_height - settings.padding * 2) / ctx_size.y);  
 
     //space is already occupied, exit.
-    if (game_array[x][y]) {
+    if (array[x][y]) {
         alert.draw(ctx, "Space Occupied.", null);
         return;
     }
 
-    register_move(ctx, margin, game_array, turn, x, y);
+    register_move(ctx, margin, array, turn, x, y);
 
 }
