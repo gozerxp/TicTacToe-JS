@@ -30,6 +30,8 @@ let turn,
 
 game_reset(game_ctx);
 
+/* ***********************************/
+
 const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
 //draw game once font is loaded
 game_font.load().then((font) => {
@@ -38,6 +40,8 @@ game_font.load().then((font) => {
     draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 
 });
+
+/* ***********************************/
 
 if (__touch_device__) {
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array);
