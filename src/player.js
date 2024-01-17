@@ -87,20 +87,21 @@ export const player = {
                 return;
             }
 
-            const padding = 20;
+            const padding = 15;
+            let font_size = 80;
             const width = ctx.canvas.width - padding * 2;
-            const window_size = [width, Math.min(width * 0.75, ctx.canvas.height - padding * 2)];
+            const window_size = [width, Math.min(width * 0.75, ctx.canvas.height - padding * 2.25)];
             const window_position = [ctx.canvas.width / 2 - window_size[0] / 2,
                                 ctx.canvas.height / 2  - window_size[1] / 2];
             
             ctx.globalAlpha = settings.alpha;
             ctx.fillStyle = settings.COLOR;
             ctx.beginPath();
-            ctx.roundRect(...window_position, ...window_size, settings.corner_radius * 2.5);
+            ctx.roundRect(...window_position, ...window_size, settings.corner_radius);
             ctx.fill();
             ctx.globalAlpha = 1;
 
-            const x_image_pos = [window_position[0] + padding, window_position[1] + padding];
+            const x_image_pos = [window_position[0], window_position[1] + padding];
             const o_image_pos = [x_image_pos[0], x_image_pos[1] + window_size[1] / 2.5];
             const symbol_size = [window_size[0] / 3, window_size[1] / 2]
 
@@ -109,7 +110,7 @@ export const player = {
 
             this.toggle_size = [window_size[0] / 6, window_size[1] / 10];
 
-            const z = (x_image_pos[0] + symbol_size[0] * 1.5);
+            const z = (x_image_pos[0] + symbol_size[0] * 1.75);
             
             this.toggle1 = [z, x_image_pos[1] + symbol_size[1] / 2 - this.toggle_size[1] / 2];
             this.toggle2 = [z, o_image_pos[1] + symbol_size[1] / 2 - this.toggle_size[1] / 2];
@@ -119,7 +120,7 @@ export const player = {
 
             const shrink = 2;
             const player_size = [symbol_size[0] / shrink, symbol_size[1] / shrink];
-            const human_position = [x_image_pos[0] + symbol_size[0] - padding, x_image_pos[1] + symbol_size[1] / 2 - player_size[1] / 2];
+            const human_position = [this.toggle1[0] - player_size[0] - padding, x_image_pos[1] + symbol_size[1] / 2 - player_size[1] / 2];
             const ai_position = [this.toggle1[0] + this.toggle_size[0] + padding, human_position[1]];
             const dup_y_position = o_image_pos[1] + symbol_size[1] / 2 - player_size[1] / 2;
 
@@ -129,12 +130,21 @@ export const player = {
             ctx.drawImage(assets.human, human_position[0], dup_y_position, ...player_size);
             ctx.drawImage(assets.ai, ai_position[0], dup_y_position, ...player_size);
 
+            const equals_txt = '=';
+            font_size = draw.reduce_font(ctx, equals_txt, font_size, this.toggle_size[0] / 2)
+            const equal_size = ctx.measureText(equals_txt).width;
+            const equal_pos = [x_image_pos[0] + symbol_size[0] - equal_size / 1.5, x_image_pos[1] + symbol_size[1] / 2 + font_size / 2];
+
+            ctx.fillStyle = "white";
+            ctx.fillText(equals_txt, ...equal_pos);
+            ctx.fillText(equals_txt, equal_pos[0], o_image_pos[1] + symbol_size[1] / 2 + font_size / 2);
+
         },
 
         toggle_player_state: function (ctx, x, y, array, margin) {
 
             // buffer creates user friendly experience when using a touchscreen
-            const buffer = 30;
+            const buffer = 40;
 
             // this flag is used to prevent unnecessary drawing.
             let update_flag = false;

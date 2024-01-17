@@ -5,6 +5,8 @@ import { player } from "./player.js";
 
 export const assets = {
 
+    ready: false,
+
     x: new Image(),
     o: new Image(),
     cats: new Image(),
@@ -16,19 +18,22 @@ export const assets = {
     
     get_image: function (turn) {
         return turn === 1 ? this.x : this.o;
-    }
+    },
+
+    load_assets: function () {
+        this.x.src = "./assets/x.png";
+        this.o.src = "./assets/o.png";
+        this.cats.src = "./assets/cat.png";
+        this.gear.src = "./assets/gear.png";
+        this.human.src = "./assets/human.png";
+        this.ai.src = "./assets/ai.png";
+        this.toggle_on.src = "./assets/toggle_on.png";
+        this.toggle_off.src = "./assets/toggle_off.png";
+    } 
 
 };
 
-
-assets.x.src = "./assets/x.png";
-assets.o.src = "./assets/o.png";
-assets.cats.src = "./assets/cat.png";
-assets.gear.src = "./assets/gear.png";
-assets.human.src = "./assets/human.png";
-assets.ai.src = "./assets/ai.png";
-assets.toggle_on.src = "./assets/toggle_on.png";
-assets.toggle_off.src = "./assets/toggle_off.png";
+assets.load_assets();
 
 /********************************************************** */
 

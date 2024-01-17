@@ -11,6 +11,6 @@ export const settings = {
     bar_height: 55,
     padding: 4,
     corner_radius: 30,
-    alpha: 0.85
+    alpha: .95
     
 };

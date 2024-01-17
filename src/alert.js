@@ -42,6 +42,7 @@ export const alert = {
         ctx.globalAlpha = 1;
 
         const offset = 2;
+        ctx.fillStyle = "black";
         ctx.fillText(`${txt}`, txt_position[0] + offset, txt_position[1] + offset);
 
         ctx.fillStyle = "white";
