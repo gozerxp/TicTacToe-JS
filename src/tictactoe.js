@@ -9,7 +9,7 @@ import { alert } from "./alert.js";
 import { ai } from "./ai.js";
 import { draw } from "./draw.js";
 import { game } from "./utilities.js";
-import { player_select } from "./player_select.js";
+import { player } from "./player.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -38,24 +38,6 @@ export const settings = {
 
 };
 
-export const player = {
-
-    x: 1, // 1 == human
-    o: 0, // 0 == ai
-
-    get_type: function (player) {
-        return player === 1 ? this.x : this.o;
-    },
-
-    update_type: function (player, new_type) {
-        if (player === 1) {
-            this.x = new_type;
-        } else {
-            this.o = new_type;
-        }
-    }
-};
-
 let turn,
     game_over,
     game_array;
@@ -73,10 +55,10 @@ game_font.load().then((font) => {
 
 if (__touch_device__) {
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array);
-    title_canvas.ontouchstart = (e) => player_select.open(e.pageX, e.pageY, title_ctx, game_ctx, game_array, settings.margin);
+    title_canvas.ontouchstart = (e) => player.select_screen.open(e.pageX, e.pageY, title_ctx, game_ctx, game_array, settings.margin);
 } else {
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game_array);
-    title_canvas.onclick = (e) => player_select.open(e.clientX, e.clientY, title_ctx, game_ctx, game_array, settings.margin);
+    title_canvas.onclick = (e) => player.select_screen.open(e.clientX, e.clientY, title_ctx, game_ctx, game_array, settings.margin);
 }
 
 window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
@@ -123,8 +105,8 @@ function change_turn() {
 function input (x, y, ctx, margin, array) {
 
     //player select menu is open
-    if (player_select.active) {
-        player_select.toggle_player_state(ctx, x, y, array, margin);
+    if (player.select_screen.active) {
+        player.select_screen.toggle_player_state(ctx, x, y, array, margin);
         return;
     }
 

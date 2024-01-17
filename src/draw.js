@@ -1,7 +1,7 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
 import { settings } from "./tictactoe.js";
-import { player_select } from "./player_select.js";
+import { player } from "./player.js";
 
 export const assets = {
 
@@ -100,7 +100,7 @@ export const draw = {
         ctx.fillStyle = settings.COLOR;
         ctx.fillText(title, x, y);
 
-        player_select.draw_icon(ctx);
+        player.select_screen.draw_icon(ctx);
 
     },
 
@@ -121,8 +121,8 @@ export const draw = {
 
         score.update_scoreboard(score_ctx);
 
-        if (player_select.active) {
-            player_select.draw(game_ctx);
+        if (player.select_screen.active) {
+            player.select_screen.draw(game_ctx);
         }
 
         if (alert.active) {

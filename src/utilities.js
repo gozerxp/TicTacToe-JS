@@ -1,8 +1,7 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
 import { assets } from "./draw.js";
-
-const get_player_turn = (turn) => { return turn === 1 ? 'X' : 'O'; };
+import { player } from "./player.js";
 
 export const game = {
 
@@ -12,7 +11,7 @@ export const game = {
                 return false;
             case turn: //current turn wins
                 score.increase_score(turn);
-                alert.draw(ctx, `${get_player_turn(turn)} Wins!`, assets.get_image(turn));
+                alert.draw(ctx, `${player.get_player_turn(turn)} Wins!`, assets.get_image(turn));
                 return true;
             case 2: //cats
                 score.increase_score(2);
