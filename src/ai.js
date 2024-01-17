@@ -7,6 +7,11 @@ export const ai = {
         const size = array.length;
         const MAX_SCORE = 10 ** size;
 
+        // randomize first move of the game.
+        if (game.count_empty(array) === size * size) {
+            return random_move(size);
+        }
+
         let best_score = -Infinity;
         let best_move;
 
@@ -35,6 +40,15 @@ export const ai = {
     }
 
 };
+
+function random_move(size) {
+
+    const x = Math.floor(Math.random() * size);
+    const y = Math.floor(Math.random() * size);
+
+    return { x, y };
+
+}
 
 function minimax(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
 
