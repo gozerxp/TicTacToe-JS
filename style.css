@@ -11,13 +11,13 @@ canvas {
 
 #game {
 
-    /* background-color: rgb(225, 225, 225); */
-    background-color: rgb(200, 200, 225);
-    margin-bottom: 4px;
+    background-color: rgb(225, 225, 225);
+    
 }
 
-#score {
-
+#score, #title {
+    margin-top: 4px;
+    margin-bottom: 4px;
     background-color: rgb(150, 150, 150);
 }
 

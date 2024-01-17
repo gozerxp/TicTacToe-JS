@@ -16,6 +16,9 @@ export const game_ctx = game_canvas.getContext("2d");
 const score_canvas = document.getElementById("score");
 export const score_ctx = score_canvas.getContext("2d");
 
+const title_canvas = document.getElementById("title");
+const title_ctx = title_canvas.getContext("2d");
+
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
 
@@ -27,7 +30,7 @@ export const settings = {
     font_face: "Montserrat",
     grid_size: 3,
     margin: 0,
-    score_height: 75,
+    bar_height: 75,
     padding: 4
 
 };
@@ -54,7 +57,7 @@ const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings
 game_font.load().then((font) => {
 
     document.fonts.add(font);
-    draw.resize_canvas(game_ctx, score_ctx, game_array);
+    draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 
 });
 
@@ -64,7 +67,7 @@ if (__touch_device__) {
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin);
 }
 
-window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, game_array);
+window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 
 /* ***********************************/
 

@@ -71,15 +71,43 @@ export const draw = {
         this.draw_grid(ctx, size, margin);
     },
 
-    resize_canvas: function (game_ctx, score_ctx, array) {
+    draw_titlebar: function(ctx) {
 
-        game_ctx.canvas.height = window.innerHeight - settings.score_height - settings.padding * 3;
+        const title = "TicTacToe.js";
+
+        let font_size = 45;
+        const offset = 2;
+        
+        font_size = reduce_font(ctx, title, font_size, ctx.canvas.width / 1.75);
+
+        ctx.font = `${font_size}px '${settings.font_face}'`;
+
+        let y = (ctx.canvas.height / 2) + font_size / 4;
+        let x = ctx.canvas.width / 2 - (ctx.measureText(title).width / 2);
+
+        ctx.fillStyle = "white";
+        ctx.fillText(title, x + offset, y + offset);
+    
+        ctx.fillStyle = settings.COLOR;
+        ctx.fillText(title, x, y);
+
+    },
+
+    resize_canvas: function (game_ctx, score_ctx, title_ctx, array) {
+
+        game_ctx.canvas.height = window.innerHeight - settings.bar_height * 2 - settings.padding * 4;
         game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth - settings.padding * 2);
 
         score_ctx.canvas.width = game_ctx.canvas.width;
-        score_ctx.canvas.height = settings.score_height;
+        score_ctx.canvas.height = settings.bar_height;
+
+        title_ctx.canvas.width = game_ctx.canvas.width;
+        title_ctx.canvas.height = settings.bar_height;
+
+        this.draw_titlebar(title_ctx);
         
         this.draw_game(game_ctx, array, settings.margin);
+
         score.update_scoreboard(score_ctx);
         if (alert.active) {
             alert.draw(game_ctx);
@@ -87,3 +115,13 @@ export const draw = {
     }
 
 };
+
+function reduce_font (ctx, text, font_size, max_size) {
+
+    ctx.font = `${font_size}px '${settings.font_face}'`;
+    while(ctx.measureText(text).width > max_size) {
+        font_size--;
+        ctx.font = `${font_size}px  '${settings.font_face}'`;
+    }
+    return font_size;
+}
