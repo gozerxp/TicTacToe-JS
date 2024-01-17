@@ -5,9 +5,11 @@ import { alert } from "./alert.js";
 export const player_select = {
 
     active: false,
+
     toggle1: [],
     toggle2: [],
     toggle_size: [],
+
     x_current_state: 0,
     o_current_state: 0,
 
@@ -44,7 +46,7 @@ export const player_select = {
                 game_reset(game_ctx);
             }
         }
-        
+
     },
 
     draw: function (ctx) {
