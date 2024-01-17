@@ -1,6 +1,6 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
-import { settings } from "./tictactoe.js";
+import { settings } from "./settings.js";
 import { player } from "./player.js";
 
 export const assets = {

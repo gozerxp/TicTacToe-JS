@@ -1,4 +1,5 @@
-import { settings, game_reset } from "./tictactoe.js";
+import { game_reset } from "./tictactoe.js";
+import { settings } from "./settings.js";
 import { assets, draw } from "./draw.js";
 import { alert } from "./alert.js";
 

@@ -10,6 +10,7 @@ import { ai } from "./ai.js";
 import { draw } from "./draw.js";
 import { game } from "./utilities.js";
 import { player } from "./player.js";
+import { settings } from "./settings.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -22,21 +23,6 @@ const title_ctx = title_canvas.getContext("2d");
 
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
-
-/* ***********************************/
-
-export const settings = {
-
-    COLOR: "rgb(50, 50, 50)",
-    font_face: "Montserrat",
-    grid_size: 3,
-    margin: 0,
-    bar_height: 55,
-    padding: 4,
-    corner_radius: 15,
-    alpha: 0.85
-
-};
 
 let turn,
     game_over,

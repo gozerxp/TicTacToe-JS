@@ -1,4 +1,5 @@
-import { score_ctx, settings } from "./tictactoe.js";
+import { score_ctx } from "./tictactoe.js";
+import { settings } from "./settings.js";
 import { assets } from "./draw.js";
 
 export const score = {

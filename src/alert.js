@@ -1,4 +1,4 @@
-import { settings } from "./tictactoe.js";
+import { settings } from "./settings.js";
 import { draw } from "./draw.js";
 
 export const alert = {
