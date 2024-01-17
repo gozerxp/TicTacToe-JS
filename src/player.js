@@ -1,6 +1,7 @@
 import { game_reset } from "./tictactoe.js";
 import { settings } from "./settings.js";
-import { assets, draw } from "./draw.js";
+import { draw } from "./draw.js";
+import { assets } from "./assets.js";
 import { alert } from "./alert.js";
 
 export const player = {

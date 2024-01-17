@@ -2,38 +2,7 @@ import { alert } from "./alert.js";
 import { score } from "./score.js";
 import { settings } from "./settings.js";
 import { player } from "./player.js";
-
-export const assets = {
-
-    ready: false,
-
-    x: new Image(),
-    o: new Image(),
-    cats: new Image(),
-    gear: new Image(),
-    human: new Image(),
-    ai: new Image(),
-    toggle_on: new Image(),
-    toggle_off: new Image(),
-    
-    get_image: function (turn) {
-        return turn === 1 ? this.x : this.o;
-    },
-
-    load_assets: function () {
-        this.x.src = "./assets/x.png";
-        this.o.src = "./assets/o.png";
-        this.cats.src = "./assets/cat.png";
-        this.gear.src = "./assets/gear.png";
-        this.human.src = "./assets/human.png";
-        this.ai.src = "./assets/ai.png";
-        this.toggle_on.src = "./assets/toggle_on.png";
-        this.toggle_off.src = "./assets/toggle_off.png";
-    } 
-
-};
-
-assets.load_assets();
+import { assets } from "./assets.js";
 
 /********************************************************** */
 

@@ -1,6 +1,6 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
-import { assets } from "./draw.js";
+import { assets } from "./assets.js";
 import { player } from "./player.js";
 
 export const game = {
