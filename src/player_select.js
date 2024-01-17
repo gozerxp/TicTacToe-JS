@@ -37,17 +37,14 @@ export const player_select = {
             this.o_current_state = player.get_type(-1);
             this.draw(game_ctx);
 
-
         } else {
 
+            // if state changes, reset game.
             if (this.x_current_state !== player.get_type(1) || this.o_current_state !== player.get_type(-1)) {
                 game_reset(game_ctx);
-                console.log("reset!");
             }
-
         }
         
-
     },
 
     draw: function (ctx) {
@@ -57,11 +54,8 @@ export const player_select = {
         }
 
         const padding = 20;
-
         const width = ctx.canvas.width - padding * 2;
-
-        const window_size = [width, width * 0.75];
-
+        const window_size = [width, width * 0.8];
         const window_position = [ctx.canvas.width / 2 - window_size[0] / 2,
                              ctx.canvas.height / 2  - window_size[1] / 2];
         
@@ -99,6 +93,7 @@ export const player_select = {
         x -= settings.padding;
         y -= settings.bar_height + settings.padding * 2
 
+        // toggle 1
         if (x >= this.toggle1[0] && x <= this.toggle1[0] + this.toggle_size[0] &&
             y >= this.toggle1[1] && y <= this.toggle1[1] + this.toggle_size[1]) {
                     
@@ -107,6 +102,7 @@ export const player_select = {
         
         }
 
+        // toggle 2
         if (x >= this.toggle2[0] && x <= this.toggle2[0] + this.toggle_size[0] &&
             y >= this.toggle2[1] && y <= this.toggle2[1] + this.toggle_size[1]) {
                 
@@ -126,7 +122,6 @@ export const player_select = {
     draw_icon: function (ctx) {
 
         const size = [ctx.canvas.height, ctx.canvas.height];
-
         const icon = this.active ? assets.x : assets.gear;
 
         ctx.drawImage(icon, 5, 0, ...size);

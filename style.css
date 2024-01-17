@@ -13,11 +13,9 @@ canvas {
     margin-top: 4px;
     margin-bottom: 4px;
     background-color: rgb(225, 225, 225);
-    
 }
 
 #score, #title {
-
     background-color: rgb(150, 150, 150);
 }
 
