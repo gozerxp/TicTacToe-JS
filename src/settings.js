@@ -6,6 +6,8 @@ export const settings = {
     font_face: "Montserrat",
     grid_size: 3,
     margin: 0,
+    max_width: 800,
+    min_height: 400,
     bar_height: 55,
     padding: 4,
     corner_radius: 30,

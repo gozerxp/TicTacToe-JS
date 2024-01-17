@@ -9,6 +9,8 @@ export const assets = {
     o: new Image(),
     cats: new Image(),
     gear: new Image(),
+    human: new Image(),
+    ai: new Image(),
     toggle_on: new Image(),
     toggle_off: new Image(),
     
@@ -18,12 +20,15 @@ export const assets = {
 
 };
 
-assets.toggle_on.src = "./assets/toggle_on.png";
-assets.toggle_off.src = "./assets/toggle_off.png";
+
 assets.x.src = "./assets/x.png";
 assets.o.src = "./assets/o.png";
 assets.cats.src = "./assets/cat.png";
 assets.gear.src = "./assets/gear.png";
+assets.human.src = "./assets/human.png";
+assets.ai.src = "./assets/ai.png";
+assets.toggle_on.src = "./assets/toggle_on.png";
+assets.toggle_off.src = "./assets/toggle_off.png";
 
 /********************************************************** */
 
@@ -83,7 +88,7 @@ export const draw = {
         const title = "TicTacToe.js";
 
         let font_size = 40;
-        const offset = 2;
+        const offset = -1;
         
         font_size = this.reduce_font(ctx, title, font_size, ctx.canvas.width / 1.75);
 
@@ -106,8 +111,10 @@ export const draw = {
 
     resize_canvas: function (game_ctx, score_ctx, title_ctx, array) {
 
-        game_ctx.canvas.height = Math.max(window.innerHeight - settings.bar_height * 2 - settings.padding * 4, 325);
-        game_ctx.canvas.width = Math.min(game_ctx.canvas.height, window.innerWidth - settings.padding * 2);
+        game_ctx.canvas.height = Math.max(window.innerHeight - settings.bar_height * 2 - settings.padding * 4, 
+                                            settings.min_height);
+        game_ctx.canvas.width = Math.min(Math.max(settings.max_width, game_ctx.canvas.height), 
+                                            window.innerWidth - settings.padding * 2);
 
         score_ctx.canvas.width = game_ctx.canvas.width;
         score_ctx.canvas.height = settings.bar_height;

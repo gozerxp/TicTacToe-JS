@@ -89,7 +89,7 @@ export const player = {
 
             const padding = 20;
             const width = ctx.canvas.width - padding * 2;
-            const window_size = [width, width * 0.75];
+            const window_size = [width, Math.min(width * 0.75, ctx.canvas.height - padding * 2)];
             const window_position = [ctx.canvas.width / 2 - window_size[0] / 2,
                                 ctx.canvas.height / 2  - window_size[1] / 2];
             
@@ -101,15 +101,15 @@ export const player = {
             ctx.globalAlpha = 1;
 
             const x_image_pos = [window_position[0] + padding, window_position[1] + padding];
-            const o_image_pos = [x_image_pos[0], x_image_pos[1] + window_size[0] / 3.25];
-            const symbol_size = [window_size[0] / 3, window_size[0] / 3]
+            const o_image_pos = [x_image_pos[0], x_image_pos[1] + window_size[1] / 2.5];
+            const symbol_size = [window_size[0] / 3, window_size[1] / 2]
 
             ctx.drawImage(assets.get_image(1), ...x_image_pos, ...symbol_size);
             ctx.drawImage(assets.get_image(-1), ...o_image_pos, ...symbol_size);
 
-            this.toggle_size = [window_size[0] / 5, window_size[1] / 10];
+            this.toggle_size = [window_size[0] / 6, window_size[1] / 10];
 
-            const z = (x_image_pos[0] + symbol_size[0] * 1.4);
+            const z = (x_image_pos[0] + symbol_size[0] * 1.5);
             
             this.toggle1 = [z, x_image_pos[1] + symbol_size[1] / 2 - this.toggle_size[1] / 2];
             this.toggle2 = [z, o_image_pos[1] + symbol_size[1] / 2 - this.toggle_size[1] / 2];
@@ -117,9 +117,24 @@ export const player = {
             ctx.drawImage(player.get_type(1) === 1 ? assets.toggle_off : assets.toggle_on, ...this.toggle1, ...this.toggle_size);
             ctx.drawImage(player.get_type(-1) === 1 ? assets.toggle_off : assets.toggle_on, ...this.toggle2, ...this.toggle_size);
 
+            const shrink = 2;
+            const player_size = [symbol_size[0] / shrink, symbol_size[1] / shrink];
+            const human_position = [x_image_pos[0] + symbol_size[0] - padding, x_image_pos[1] + symbol_size[1] / 2 - player_size[1] / 2];
+            const ai_position = [this.toggle1[0] + this.toggle_size[0] + padding, human_position[1]];
+            const dup_y_position = o_image_pos[1] + symbol_size[1] / 2 - player_size[1] / 2;
+
+            ctx.drawImage(assets.human, ...human_position, ...player_size);
+            ctx.drawImage(assets.ai, ...ai_position, ...player_size);
+
+            ctx.drawImage(assets.human, human_position[0], dup_y_position, ...player_size);
+            ctx.drawImage(assets.ai, ai_position[0], dup_y_position, ...player_size);
+
         },
 
         toggle_player_state: function (ctx, x, y, array, margin) {
+
+            // buffer creates user friendly experience when using a touchscreen
+            const buffer = 30;
 
             // this flag is used to prevent unnecessary drawing.
             let update_flag = false;
@@ -129,7 +144,7 @@ export const player = {
 
             // toggle 1
             if (x >= this.toggle1[0] && x <= this.toggle1[0] + this.toggle_size[0] &&
-                y >= this.toggle1[1] && y <= this.toggle1[1] + this.toggle_size[1]) {
+                y >= this.toggle1[1] - buffer && y <= this.toggle1[1] + this.toggle_size[1] + buffer) {
                         
                 player.update_type(1, player.get_type(1) === 1 ? 0 : 1);
                 update_flag = true;
@@ -138,7 +153,7 @@ export const player = {
 
             // toggle 2
             if (x >= this.toggle2[0] && x <= this.toggle2[0] + this.toggle_size[0] &&
-                y >= this.toggle2[1] && y <= this.toggle2[1] + this.toggle_size[1]) {
+                y >= this.toggle2[1] - buffer && y <= this.toggle2[1] + this.toggle_size[1] + buffer) {
                     
                 player.update_type(-1, player.get_type(-1) === 1 ? 0 : 1);
                 update_flag = true;
