@@ -148,7 +148,7 @@ function input (x, y, ctx, margin, array) {
 
     //space is already occupied, exit.
     if (array[x][y]) {
-        alert.draw(ctx, "Space Occupied.", null);
+        alert.draw(ctx, "Space Occupied.", null);//'⛔');
         return;
     }
 

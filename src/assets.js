@@ -13,6 +13,7 @@ export const assets = {
     toggle_on: new Image(),
     toggle_off: new Image(),
 
+
     get_image: function (turn) {
         return turn === 1 ? this.x : this.o;
     },
@@ -26,6 +27,7 @@ export const assets = {
         this.ai.src = "./assets/ai.png";
         this.toggle_on.src = "./assets/toggle_on.png";
         this.toggle_off.src = "./assets/toggle_off.png";
+
     },
 
     check_ready: function () {
@@ -33,47 +35,46 @@ export const assets = {
         if (this.ready_count === this.ready_total) {
             this.ready = true;
         }
+    },
+
+    count_ready: function() {
+        this.ready_count++;
+        this.check_ready();
     }
+
 };
 
 assets.load_assets();
 
 assets.x.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.o.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.cats.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.gear.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.human.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.ai.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.toggle_on.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
 
 assets.toggle_off.onload = function () {
-    assets.ready_count++;
-    assets.check_ready();
+    assets.count_ready();
 };
+

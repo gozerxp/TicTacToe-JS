@@ -21,6 +21,7 @@ export const player = {
             if (this.x === 0 && this.o === 0) {
                 this.o = 1;
             }
+            
         } else {
 
             this.o = new_type;
