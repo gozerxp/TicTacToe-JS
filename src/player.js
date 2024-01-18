@@ -6,8 +6,8 @@ import { alert } from "./alert.js";
 
 export const player = {
 
-    x: 1, // 1 == human
-    o: 0, // 0 == ai
+    x: 0, // 1 == human
+    o: 1, // 0 == ai
 
     get_type: function (player) {
         return player === 1 ? this.x : this.o;
