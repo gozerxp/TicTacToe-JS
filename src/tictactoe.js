@@ -12,6 +12,7 @@ import { game } from "./utilities.js";
 import { player } from "./player.js";
 import { settings } from "./settings.js";
 import { assets } from "./assets.js";
+import { delay } from "./delay.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -25,38 +26,21 @@ const title_ctx = title_canvas.getContext("2d");
 //check for touchscreen
 const __touch_device__ = window.ontouchstart !== undefined;
 
-const game_font = new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`);
-let font_ready = false;
-
 let turn,
     game_over,
     game_array;
 
-//draw game once font is loaded
-game_font.load().then((font) => {
-    document.fonts.add(font);
-    font_ready = true;
-});
-
-function __delay__(timer) {
-    return new Promise(resolve => {
-        timer = timer || 2000;
-        setTimeout(function () {
-            resolve();
-        }, timer);
-    });
-};
-
 async function load_game() {
-
-    while (!font_ready || !assets.ready) {
-        await __delay__(1);
+    // draw game once assets are loaded
+    while (!assets.ready) {
+        await delay(1);
     }
-
+    //redraw
     draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 }
 
 game_reset(game_ctx);
+draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
 load_game();
 
 /* ***********************************/

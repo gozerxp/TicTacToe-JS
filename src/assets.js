@@ -1,8 +1,9 @@
+import { settings } from "./settings.js";
 
 export const assets = {
     ready: false,
     ready_count: 0,
-    ready_total: 8,
+    ready_total: 9,
 
     x: new Image(),
     o: new Image(),
@@ -13,6 +14,7 @@ export const assets = {
     toggle_on: new Image(),
     toggle_off: new Image(),
 
+    font: new FontFace(`${settings.font_face}`, `url(./assets/${settings.font_face}.ttf)`),
 
     get_image: function (turn) {
         return turn === 1 ? this.x : this.o;
@@ -31,7 +33,6 @@ export const assets = {
     },
 
     check_ready: function () {
-
         if (this.ready_count === this.ready_total) {
             this.ready = true;
         }
@@ -77,4 +78,9 @@ assets.toggle_on.onload = function () {
 assets.toggle_off.onload = function () {
     assets.count_ready();
 };
+
+assets.font.load().then((font) => {
+    document.fonts.add(font);
+    assets.count_ready();
+});
 
