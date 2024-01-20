@@ -73,6 +73,7 @@ export const game = {
 
         const size = array.length;
         let count = 0;
+        
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
                 if (!array[x][y]) {
@@ -80,6 +81,7 @@ export const game = {
                 }
             }
         }
+
         return count;
 
     },

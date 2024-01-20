@@ -9,7 +9,7 @@ export const ai = {
 
         // randomize first move of the game.
         if (game.count_empty(array) === size * size) {
-            return random_move(size);
+            return this.random_move(size);
         }
 
         let best_score = -Infinity;
@@ -37,18 +37,18 @@ export const ai = {
         }
 
         return best_move;
+    },
+
+    random_move: function (size) {
+
+        const x = Math.floor(Math.random() * size);
+        const y = Math.floor(Math.random() * size);
+    
+        return { x, y };
+    
     }
 
 };
-
-function random_move(size) {
-
-    const x = Math.floor(Math.random() * size);
-    const y = Math.floor(Math.random() * size);
-
-    return { x, y };
-
-}
 
 function minimax(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
 

@@ -6,4 +6,3 @@ export function delay(timer) {
         }, timer);
     });
 }
-;
