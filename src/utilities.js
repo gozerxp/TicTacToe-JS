@@ -49,12 +49,13 @@ export const game = {
                 diag2 = false;
 
             //check for empty squares to help determine cats game
-            if (!count_empty) {
-                for (let y = 0; y < size; y++) {
-                    if (!array[x][y]) {
-                        count_empty = true;
-                        break;
-                    }
+            if (count_empty) 
+                continue;
+
+            for (let y = 0; y < size; y++) {
+                if (!array[x][y]) {
+                    count_empty = true;
+                    break;
                 }
             }
         }
