@@ -6,17 +6,22 @@ import { player } from "./player.js";
 export const game = {
 
     check_game: function (ctx, array, turn, x, y) {
+
         switch (this.evluate_game(array, turn, x, y)) {
+
             case 0: //no winner
                 return false;
+
             case turn: //current turn wins
                 score.increase_score(turn);
                 alert.draw(ctx, `${player.get_player_turn(turn)} Wins!`, assets.get_image(turn));
                 return true;
+
             case 2: //cats
                 score.increase_score(2);
                 alert.draw(ctx, "Cats Game!", assets.cats);
                 return true;
+                
             default:
         }
 
@@ -33,24 +38,29 @@ export const game = {
         for (let x = 0; x < size; x++) {
 
             //scan column
-            if (array[x_pos][x] !== turn)
+            if (array[x_pos][x] !== turn) {
                 scan_x = false;
+            }
 
             //scan row
-            if (array[x][y_pos] !== turn)
+            if (array[x][y_pos] !== turn) {
                 scan_y = false;
+            }
 
             //scan diagonal
-            if (array[x][x] !== turn)
+            if (array[x][x] !== turn) {
                 diag1 = false;
+            }
 
             //scan opposite diagonal
-            if (array[x][size - 1 - x] !== turn)
+            if (array[x][size - 1 - x] !== turn) {
                 diag2 = false;
+            }
 
             //check for empty squares to help determine cats game
-            if (count_empty) 
+            if (count_empty) {
                 continue;
+            }
 
             for (let y = 0; y < size; y++) {
                 if (!array[x][y]) {
@@ -61,10 +71,14 @@ export const game = {
         }
 
         //if any of the flags are still true then the current turn won.
-        if (scan_x || scan_y || diag1 || diag2) return turn;
+        if (scan_x || scan_y || diag1 || diag2) {
+            return turn;
+        }
 
         //if no winner + no empty space found then return 2 for a cats game.
-        if (!count_empty) return 2;
+        if (!count_empty) {
+            return 2;
+        }
 
         // empty spaces were found, return 0 to continue game.
         return 0;

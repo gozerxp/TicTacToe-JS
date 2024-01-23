@@ -23,15 +23,18 @@ export const ai = {
                     let ai_score = minimax(x, y, array, size, turn, 0, false, MAX_SCORE);
                     array[x][y] = 0;
 
-                    if (ai_score > best_score) {
-                        best_score = ai_score;
-                        best_move = { x, y };
-
-                        // MAX_SCORE represents 0 depth == winning move.
-                        if (best_score === MAX_SCORE) {
-                            return best_move;
-                        }
+                    if (ai_score <= best_score) {
+                        continue;
                     }
+
+                    best_score = ai_score;
+                    best_move = { x, y };
+
+                    // MAX_SCORE represents 0 depth == winning move.
+                    if (best_score === MAX_SCORE) {
+                        return best_move;
+                    }
+
                 }
             }
         }
@@ -67,14 +70,16 @@ function minimax(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
         let best_score = -Infinity;
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
-                if (!array[x][y]) {
 
-                    array[x][y] = turn;
-                    let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
-                    array[x][y] = 0;
-
-                    best_score = Math.max(score, best_score);
+                if (array[x][y]) {
+                    continue;
                 }
+
+                array[x][y] = turn;
+                let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
+                array[x][y] = 0;
+
+                best_score = Math.max(score, best_score);
             }
         }
 
@@ -85,14 +90,16 @@ function minimax(x, y, array, size, turn, depth, Maximize, MAX_SCORE) {
         let best_score = Infinity;
         for (let x = 0; x < size; x++) {
             for (let y = 0; y < size; y++) {
-                if (!array[x][y]) {
 
-                    array[x][y] = -turn;
-                    let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
-                    array[x][y] = 0;
-
-                    best_score = Math.min(score, best_score);
+                if (array[x][y]) {
+                    continue;
                 }
+
+                array[x][y] = -turn;
+                let score = minimax(x, y, array, size, turn, depth + 1, !Maximize, MAX_SCORE);
+                array[x][y] = 0;
+
+                best_score = Math.min(score, best_score);
             }
         }
 

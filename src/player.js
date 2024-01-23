@@ -14,6 +14,7 @@ export const player = {
     },
 
     update_type: function (player, new_type) {
+
         if (player === 1) {
 
             this.x = new_type;
@@ -76,7 +77,8 @@ export const player = {
             } else {
 
                 // if state changes, reset game.
-                if (this.x_current_state !== player.get_type(1) || this.o_current_state !== player.get_type(-1)) {
+                if (this.x_current_state !== player.get_type(1) || 
+                        this.o_current_state !== player.get_type(-1)) {
                     game_reset(game_ctx);
                 }
             }
@@ -173,7 +175,6 @@ export const player = {
             }
 
             if (update_flag) {
-
                 draw.draw_game(ctx, array, margin);
                 this.draw(ctx);
             }
