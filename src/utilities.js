@@ -33,7 +33,11 @@ export const game = {
         const size = array.length;
 
         //true until they are not
-        let scan_x = true, scan_y = true, diag1 = true, diag2 = true, count_empty = false;
+        let scan_x = true, 
+            scan_y = true, 
+            diag1 = true, 
+            diag2 = true, 
+            count_empty = false;
 
         for (let x = 0; x < size; x++) {
 
