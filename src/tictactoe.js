@@ -6,6 +6,8 @@ Art by Ferris Andersen
 http://www.gozerxp.com/
 */
 
+"use strict";
+
 import { alert } from "./alert.js";
 import { ai } from "./ai.js";
 import { draw } from "./draw.js";
@@ -14,6 +16,7 @@ import { player } from "./player.js";
 import { settings } from "./settings.js";
 import { assets } from "./assets.js";
 import { delay } from "./delay.js";
+import { select_screen } from "./select_screen.js";
 
 const game_canvas = document.getElementById("game");
 export const game_ctx = game_canvas.getContext("2d");
@@ -48,10 +51,10 @@ load_game();
 
 if (__touch_device__) {
     game_canvas.ontouchstart = (e) => input(e.pageX, e.pageY, game_ctx, settings.margin, game_array);
-    title_canvas.ontouchstart = (e) => player.select_screen.open(e.pageX, e.pageY, title_ctx, game_ctx, game_array, settings.margin);
+    title_canvas.ontouchstart = (e) => select_screen.open(e.pageX, e.pageY, title_ctx, game_ctx, game_array, settings.margin);
 } else {
     game_canvas.onclick = (e) => input(e.clientX, e.clientY, game_ctx, settings.margin, game_array);
-    title_canvas.onclick = (e) => player.select_screen.open(e.clientX, e.clientY, title_ctx, game_ctx, game_array, settings.margin);
+    title_canvas.onclick = (e) => select_screen.open(e.clientX, e.clientY, title_ctx, game_ctx, game_array, settings.margin);
 }
 
 window.onresize = () => draw.resize_canvas(game_ctx, score_ctx, title_ctx, game_array);
@@ -98,8 +101,8 @@ function change_turn() {
 function input (x, y, ctx, margin, array) {
 
     //player select menu is open
-    if (player.select_screen.active) {
-        player.select_screen.toggle_player_state(ctx, x, y, array, margin);
+    if (select_screen.active) {
+        select_screen.toggle_player_state(ctx, x, y, array, margin);
         return;
     }
 

@@ -1,8 +1,8 @@
 import { alert } from "./alert.js";
 import { score } from "./score.js";
 import { settings } from "./settings.js";
-import { player } from "./player.js";
 import { assets } from "./assets.js";
+import { select_screen } from "./select_screen.js";
 
 /********************************************************** */
 
@@ -79,7 +79,7 @@ export const draw = {
         ctx.fillStyle = settings.COLOR;
         ctx.fillText(title, x, y);
 
-        player.select_screen.draw_icon(ctx);
+        select_screen.draw_icon(ctx);
 
     },
 
@@ -102,8 +102,8 @@ export const draw = {
 
         score.update_scoreboard(score_ctx);
 
-        if (player.select_screen.active) {
-            player.select_screen.draw(game_ctx);
+        if (select_screen.active) {
+            select_screen.draw(game_ctx);
         }
 
         if (alert.active) {
