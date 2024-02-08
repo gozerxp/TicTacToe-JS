@@ -3,7 +3,8 @@
 
 export const settings = {
 
-    COLOR: "rgb(50, 50, 50)",
+    title: "TicTacToe.js",
+    color: "rgb(50, 50, 50)",
     font_face: "Montserrat",
     grid_size: 3,
     margin: 0,

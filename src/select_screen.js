@@ -76,7 +76,7 @@ export const select_screen = {
                             ctx.canvas.height / 2  - window_size[1] / 2];
         
         ctx.globalAlpha = settings.alpha;
-        ctx.fillStyle = settings.COLOR;
+        ctx.fillStyle = settings.color;
         ctx.beginPath();
         ctx.roundRect(...window_position, ...window_size, settings.corner_radius);
         ctx.fill();

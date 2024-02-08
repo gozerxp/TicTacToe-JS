@@ -59,7 +59,7 @@ function draw_score_component (ctx, img, score, position, param) {
     ctx.fillStyle = "white";
     ctx.fillText(`${score}`, x_pos + param.margin + param.width + offset, txt_y + offset);
 
-    ctx.fillStyle = settings.COLOR;
+    ctx.fillStyle = settings.color;
     ctx.fillText(`${score}`, x_pos + param.margin + param.width, txt_y);
 
 }

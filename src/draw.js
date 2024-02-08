@@ -20,7 +20,7 @@ export const draw = {
 
     draw_grid: function (ctx, size, margin) {
 
-        ctx.strokeStyle = settings.COLOR;
+        ctx.strokeStyle = settings.color;
         ctx.lineWidth = 3;
 
         const ctx_size = this.get_ctx_size(ctx, size, margin);
@@ -59,7 +59,7 @@ export const draw = {
 
     draw_titlebar: function(ctx) {
 
-        const title = "TicTacToe.js";
+        const title = settings.title;
 
         let font_size = 40;
         const offset = -1;
@@ -76,7 +76,7 @@ export const draw = {
         ctx.fillStyle = "white";
         ctx.fillText(title, x + offset, y + offset);
     
-        ctx.fillStyle = settings.COLOR;
+        ctx.fillStyle = settings.color;
         ctx.fillText(title, x, y);
 
         select_screen.draw_icon(ctx);
