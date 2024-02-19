@@ -44,7 +44,7 @@ export const alert = {
                 ctx.canvas.height / 2 + (font_size + h) / 2];
 
         ctx.globalAlpha = settings.alpha;
-        ctx.fillStyle = settings.COLOR;
+        ctx.fillStyle = settings.color;
         ctx.beginPath();
         ctx.roundRect(...position, ...size, settings.corner_radius);
         ctx.fill();
